@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schema/odex-imx-state-delta-v0.1.schema.json",
+  "type": "object",
+  "required": [
+    "operations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "delta_id",
+          "operation",
+          "target",
+          "prior_hash",
+          "resulting_value",
+          "basis",
+          "claim_refs",
+          "timestamp"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "delta_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "ADD",
+              "MODIFY",
+              "SUPERSEDE",
+              "REJECT",
+              "VERIFY_UNCHANGED"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "pattern": "^(/([^/~]|~0|~1)*)*$"
+          },
+          "prior_hash": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "resulting_value": {},
+          "basis": {
+            "type": "object",
+            "required": [
+              "reason"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "claim_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "parent_state_hash": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "lineage": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

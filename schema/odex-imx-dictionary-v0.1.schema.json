@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schema/odex-imx-dictionary-v0.1.schema.json",
+  "type": "object",
+  "required": [
+    "dictionary_id",
+    "version",
+    "terms"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "dictionary_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "term_id",
+          "canonical_term",
+          "definition",
+          "status",
+          "aliases",
+          "supersedes",
+          "introduced_in"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "term_id": {
+            "type": "string",
+            "pattern": "^TERM-[0-9]{4}$"
+          },
+          "canonical_term": {
+            "type": "string",
+            "minLength": 1
+          },
+          "definition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CURRENT",
+              "SUPERSEDED",
+              "REVOKED",
+              "DRAFT"
+            ]
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "supersedes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "introduced_in": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

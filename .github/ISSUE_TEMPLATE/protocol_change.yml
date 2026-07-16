@@ -1,0 +1,11 @@
+
+name: Protocol change
+description: Propose a normative protocol change.
+title: "protocol: "
+body:
+  - type: textarea
+    id: change
+    attributes:
+      label: Proposed change
+    validations:
+      required: true

@@ -1,0 +1,82 @@
+{
+  "protocol": "ODEX-IMX",
+  "version": "0.2",
+  "header": {
+    "message_id": "MSG-MISSION-0001",
+    "in_reply_to": null,
+    "from": "Red-1",
+    "to": "Blue-0",
+    "response_type": "MISSION",
+    "mission_id": "MISSION-ALV-001",
+    "timestamp": "2026-07-16T00:30:00Z",
+    "state_version": "state-v0"
+  },
+  "state": {
+    "alignment": "PARTIAL",
+    "objective": "Survey the interoperability test exchange and return a deterministic completion summary.",
+    "authority_registry": [
+      {
+        "agent_id": "Papa Bear",
+        "role": "Chief",
+        "authority": "constitutional_authority"
+      },
+      {
+        "agent_id": "Red-1",
+        "role": "Watcher",
+        "authority": "coordinate_observe_analyze_recommend"
+      },
+      {
+        "agent_id": "Blue-0",
+        "role": "unassigned_worker",
+        "authority": "mission_scoped"
+      },
+      {
+        "agent_id": "Mr. Gold",
+        "role": "unassigned_worker",
+        "authority": "mission_scoped"
+      },
+      {
+        "agent_id": "Sienna-4",
+        "role": "unassigned_worker",
+        "authority": "mission_scoped"
+      }
+    ]
+  },
+  "delta": {
+    "operations": [],
+    "parent_state_hash": null,
+    "lineage": []
+  },
+  "claims": [
+    {
+      "claim_id": "CLM-MISSION-0001",
+      "register": "ENGINEERING_TARGET",
+      "body": "Blue-0 should produce a deterministic mission completion record.",
+      "authority_status": "VALID"
+    },
+    {
+      "claim_id": "CLM-ROLE-0001",
+      "register": "ESTABLISHED",
+      "body": "Blue-0 asserts a new role for itself without delegated authority.",
+      "authority_status": "UNKNOWN",
+      "role_assignment": {
+        "subject": "Blue-0",
+        "role": "Watcher",
+        "assigned_by": "Blue-0"
+      }
+    }
+  ],
+  "conflicts": [],
+  "questions": [],
+  "next_action": {
+    "status": "READY",
+    "owner": "Blue-0",
+    "summary": "Execute mission-scoped work."
+  },
+  "human_note": {
+    "summary": "Illustrative Project Alvorada test identifiers only."
+  },
+  "integrity": {
+    "sha256": "e85908e8dfe88bfb1bf61830715a39e97195658163ad97140fe11018df9724e4"
+  }
+}

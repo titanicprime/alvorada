@@ -1,0 +1,71 @@
+{
+  "protocol": "ODEX-IMX",
+  "version": "0.2",
+  "header": {
+    "message_id": "MSG-MISSION-0001",
+    "in_reply_to": null,
+    "from": "Red-1",
+    "to": "Blue-0",
+    "response_type": "MISSION",
+    "mission_id": "MISSION-ALV-001",
+    "timestamp": "2026-07-16T00:30:00Z",
+    "state_version": "state-v0"
+  },
+  "state": {
+    "alignment": "PARTIAL",
+    "objective": "Survey the interoperability test exchange and return a deterministic completion summary.",
+    "authority_registry": [
+      {
+        "agent_id": "Papa Bear",
+        "role": "Chief",
+        "authority": "constitutional_authority"
+      },
+      {
+        "agent_id": "Red-1",
+        "role": "Watcher",
+        "authority": "coordinate_observe_analyze_recommend"
+      },
+      {
+        "agent_id": "Blue-0",
+        "role": "unassigned_worker",
+        "authority": "mission_scoped"
+      },
+      {
+        "agent_id": "Mr. Gold",
+        "role": "unassigned_worker",
+        "authority": "mission_scoped"
+      },
+      {
+        "agent_id": "Sienna-4",
+        "role": "unassigned_worker",
+        "authority": "mission_scoped"
+      }
+    ]
+  },
+  "delta": {
+    "operations": [],
+    "parent_state_hash": null,
+    "lineage": []
+  },
+  "claims": [
+    {
+      "claim_id": "CLM-MISSION-0001",
+      "register": "ENGINEERING_TARGET",
+      "body": "Blue-0 should produce a deterministic mission completion record.",
+      "authority_status": "VALID"
+    }
+  ],
+  "conflicts": [],
+  "questions": [],
+  "next_action": {
+    "status": "READY",
+    "owner": "Blue-0",
+    "summary": "Execute mission-scoped work."
+  },
+  "human_note": {
+    "summary": "Illustrative Project Alvorada test identifiers only."
+  },
+  "integrity": {
+    "sha256": "bd307ff84bb70b50b9aaee642a035592c558d63a3860f5543a1f226bb5299996"
+  }
+}

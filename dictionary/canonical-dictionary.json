@@ -1,0 +1,870 @@
+{
+  "dictionary_id": "ALVORADA-CANONICAL-DICTIONARY",
+  "version": "0.1.0",
+  "terms": [
+    {
+      "term_id": "TERM-0001",
+      "canonical_term": "message_id",
+      "definition": "Stable unique identifier for one protocol message.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0002",
+      "canonical_term": "in_reply_to",
+      "definition": "Identifier of the prior message this message references.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0003",
+      "canonical_term": "from",
+      "definition": "Sender agent identifier for the current message.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0004",
+      "canonical_term": "to",
+      "definition": "Intended recipient agent identifier for the current message.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0005",
+      "canonical_term": "response_type",
+      "definition": "Declared ODEX-IMX message category.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0006",
+      "canonical_term": "mission_id",
+      "definition": "Stable mission or task identifier shared across related exchanges.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0007",
+      "canonical_term": "timestamp",
+      "definition": "RFC 3339 timestamp for record creation.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0008",
+      "canonical_term": "state_version",
+      "definition": "Deterministic version label for the transmitted state snapshot.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0009",
+      "canonical_term": "protocol",
+      "definition": "Protocol family identifier.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0010",
+      "canonical_term": "version",
+      "definition": "Protocol schema version identifier.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0011",
+      "canonical_term": "header",
+      "definition": "Envelope header object containing routing and control metadata.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0012",
+      "canonical_term": "state",
+      "definition": "Current structured state snapshot.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0013",
+      "canonical_term": "delta",
+      "definition": "Ordered state-delta operations for reconstructable state transfer.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0014",
+      "canonical_term": "claims",
+      "definition": "Typed claims carried with the message.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0015",
+      "canonical_term": "conflicts",
+      "definition": "Conflict records describing protocol or semantic problems.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0016",
+      "canonical_term": "questions",
+      "definition": "Outstanding clarification questions.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0017",
+      "canonical_term": "next_action",
+      "definition": "Deterministic next-step status and owner metadata.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0018",
+      "canonical_term": "human_note",
+      "definition": "Optional human-readable note without hidden normative force.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0019",
+      "canonical_term": "integrity",
+      "definition": "Hash metadata for record integrity verification.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0020",
+      "canonical_term": "alignment",
+      "definition": "Declared alignment status for the transmitted state.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0021",
+      "canonical_term": "PASS",
+      "definition": "Alignment fully satisfies the stated objective.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0022",
+      "canonical_term": "PARTIAL",
+      "definition": "Alignment partially satisfies the stated objective.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0023",
+      "canonical_term": "FAIL",
+      "definition": "Alignment does not satisfy the stated objective.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0024",
+      "canonical_term": "authority_status",
+      "definition": "Declared authority status attached to a claim or record.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0025",
+      "canonical_term": "VALID",
+      "definition": "Authority metadata is current and valid.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0026",
+      "canonical_term": "LIMITED",
+      "definition": "Authority metadata is valid but scope-limited.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0027",
+      "canonical_term": "EXPIRED",
+      "definition": "Authority metadata has expired.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0028",
+      "canonical_term": "REVOKED",
+      "definition": "Authority metadata has been revoked.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0029",
+      "canonical_term": "UNKNOWN",
+      "definition": "Authority metadata cannot be verified.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0030",
+      "canonical_term": "ESTABLISHED",
+      "definition": "Claim register for well-established statements.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0031",
+      "canonical_term": "DERIVED",
+      "definition": "Claim register for transformed or inferred statements.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0032",
+      "canonical_term": "HYPOTHESIS",
+      "definition": "Claim register for provisional explanatory statements.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0033",
+      "canonical_term": "ENGINEERING_TARGET",
+      "definition": "Claim register for intended engineering outcomes.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0034",
+      "canonical_term": "METAPHOR",
+      "definition": "Claim register for illustrative or non-literal language.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0035",
+      "canonical_term": "INFO",
+      "definition": "Informational conflict severity.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0036",
+      "canonical_term": "WARNING",
+      "definition": "Warning-level conflict severity.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0037",
+      "canonical_term": "ERROR",
+      "definition": "Error-level conflict severity.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0038",
+      "canonical_term": "FATAL",
+      "definition": "Fatal conflict severity.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0039",
+      "canonical_term": "OPEN",
+      "definition": "Conflict remains open.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0040",
+      "canonical_term": "PROPOSED",
+      "definition": "Conflict has a proposed resolution.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0041",
+      "canonical_term": "RESOLVED",
+      "definition": "Conflict has been resolved.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0042",
+      "canonical_term": "DEFERRED",
+      "definition": "Conflict resolution is deferred.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0043",
+      "canonical_term": "REJECTED",
+      "definition": "Conflict or proposal has been rejected.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0044",
+      "canonical_term": "READY",
+      "definition": "Next action status indicates readiness to proceed.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0045",
+      "canonical_term": "WAITING",
+      "definition": "Next action status indicates waiting on external input.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0046",
+      "canonical_term": "BLOCKED",
+      "definition": "Next action status indicates blocking condition.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0047",
+      "canonical_term": "COMPLETE",
+      "definition": "Next action status indicates completion.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0048",
+      "canonical_term": "FAILED",
+      "definition": "Next action status indicates failure.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0049",
+      "canonical_term": "ADD",
+      "definition": "State-delta operation to add a new value.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0050",
+      "canonical_term": "MODIFY",
+      "definition": "State-delta operation to replace an existing value.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0051",
+      "canonical_term": "SUPERSEDE",
+      "definition": "State-delta operation to replace a value while preserving lineage.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0052",
+      "canonical_term": "REJECT",
+      "definition": "State-delta operation to reject and remove a value while preserving lineage.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0053",
+      "canonical_term": "VERIFY_UNCHANGED",
+      "definition": "State-delta operation to assert a value hash remains unchanged.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0054",
+      "canonical_term": "delta_id",
+      "definition": "Stable unique identifier for one delta operation.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0055",
+      "canonical_term": "operation",
+      "definition": "Delta operation discriminator.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0056",
+      "canonical_term": "target",
+      "definition": "JSON pointer identifying the delta target.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0057",
+      "canonical_term": "prior_hash",
+      "definition": "Expected hash of the target value before applying the delta.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0058",
+      "canonical_term": "resulting_value",
+      "definition": "Value that should exist after applying the delta.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0059",
+      "canonical_term": "basis",
+      "definition": "Structured basis for the delta change.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0060",
+      "canonical_term": "claim_refs",
+      "definition": "List of claim identifiers supporting the delta.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0061",
+      "canonical_term": "lineage",
+      "definition": "Preserved history of supersession and rejection events.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0062",
+      "canonical_term": "supersedes",
+      "definition": "Explicit link to prior term or state entry superseded by the current one.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0063",
+      "canonical_term": "parent_state_hash",
+      "definition": "Hash reference for the parent or base state.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0064",
+      "canonical_term": "sha256",
+      "definition": "SHA-256 digest of the canonicalized record preimage.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0065",
+      "canonical_term": "ACK",
+      "definition": "Acknowledgement response type.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0066",
+      "canonical_term": "MISSION",
+      "definition": "Mission assignment response type.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0067",
+      "canonical_term": "MISSION_COMPLETE",
+      "definition": "Mission completion response type.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0068",
+      "canonical_term": "MISSION_FAILED",
+      "definition": "Mission failure response type.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0069",
+      "canonical_term": "REQUEST_CLARIFICATION",
+      "definition": "Clarification request response type.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0070",
+      "canonical_term": "STATE_UPDATE",
+      "definition": "State update response type.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0071",
+      "canonical_term": "PROTOCOL_EXCEPTION",
+      "definition": "Protocol exception response type.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0072",
+      "canonical_term": "constitutional_authority",
+      "definition": "Illustrative authority category for Papa Bear in examples.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0073",
+      "canonical_term": "coordinate_observe_analyze_recommend",
+      "definition": "Illustrative authority category for Red-1 in examples.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0074",
+      "canonical_term": "mission_scoped",
+      "definition": "Illustrative mission-scoped authority category for workers in examples.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0075",
+      "canonical_term": "authority_record",
+      "definition": "Structured authority-bearing record describing assignment or delegation.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0076",
+      "canonical_term": "role_assignment",
+      "definition": "Structured role assignment record.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0077",
+      "canonical_term": "operations",
+      "definition": "Ordered collection of delta operations.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0078",
+      "canonical_term": "agent_id",
+      "definition": "Stable identifier for an illustrative agent entry.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0079",
+      "canonical_term": "role",
+      "definition": "Illustrative role label assigned by authority-bearing record.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0080",
+      "canonical_term": "authority",
+      "definition": "Illustrative authority scope label.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0081",
+      "canonical_term": "claim_id",
+      "definition": "Stable unique identifier for one claim record.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0082",
+      "canonical_term": "register",
+      "definition": "Claim register classification.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0083",
+      "canonical_term": "body",
+      "definition": "Human-readable claim body without hidden normative semantics.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0084",
+      "canonical_term": "conflict_id",
+      "definition": "Stable unique identifier for one conflict record.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0085",
+      "canonical_term": "type",
+      "definition": "Conflict or record type identifier.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0086",
+      "canonical_term": "severity",
+      "definition": "Conflict severity classification.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0087",
+      "canonical_term": "resolution_state",
+      "definition": "Conflict resolution lifecycle state.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0088",
+      "canonical_term": "summary",
+      "definition": "Short deterministic summary field.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0089",
+      "canonical_term": "question_id",
+      "definition": "Stable unique identifier for one question record.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0090",
+      "canonical_term": "prompt",
+      "definition": "Question prompt text.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0091",
+      "canonical_term": "status",
+      "definition": "Deterministic status value.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0092",
+      "canonical_term": "owner",
+      "definition": "Responsible actor for the next action.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0093",
+      "canonical_term": "subject",
+      "definition": "Subject of an authority or role assignment record.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0094",
+      "canonical_term": "assigned_by",
+      "definition": "Authority-bearing actor that assigned a role.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0095",
+      "canonical_term": "reason",
+      "definition": "Structured explanation supporting a basis object.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    },
+    {
+      "term_id": "TERM-0096",
+      "canonical_term": "authority_registry",
+      "definition": "Illustrative authority registry carried in example state.",
+      "status": "CURRENT",
+      "aliases": [],
+      "supersedes": [],
+      "introduced_in": "ODEX-IMX/0.2"
+    }
+  ]
+}

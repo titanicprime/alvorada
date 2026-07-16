@@ -1,0 +1,11 @@
+
+name: Conformance failure
+description: Report a schema or conformance failure.
+title: "conformance: "
+body:
+  - type: textarea
+    id: failure
+    attributes:
+      label: Failure details
+    validations:
+      required: true

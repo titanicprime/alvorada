@@ -1,0 +1,10 @@
+{
+  "conflict_types": [
+    "SCHEMA_VIOLATION",
+    "TERM_MUTATION",
+    "AUTHORITY_ASSIGNMENT",
+    "LINEAGE_BREAK",
+    "HASH_MISMATCH",
+    "CODEBOOK_VERSION_SKEW"
+  ]
+}

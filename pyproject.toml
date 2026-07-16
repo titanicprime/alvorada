@@ -1,0 +1,50 @@
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project-alvorada"
+version = "0.1.0"
+description = "Machine-verifiable interagent protocol artifacts and validators for Project Alvorada"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Cognous" }]
+dependencies = [
+  "jsonschema==4.26.0",
+  "rfc8785==0.1.4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy==2.3.0",
+  "pre-commit==4.6.0",
+  "pytest==9.1.1",
+  "ruff==0.15.22",
+  "types-jsonschema==4.26.0.20260518",
+]
+
+[project.scripts]
+alvorada = "alvorada.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["alvorada"]

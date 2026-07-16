@@ -1,0 +1,22 @@
+{
+  "profile_id": "implementation",
+  "protocol_version": "0.2",
+  "required_top_level_fields": [
+    "protocol",
+    "version",
+    "header",
+    "state",
+    "delta",
+    "claims",
+    "conflicts",
+    "questions",
+    "next_action",
+    "human_note",
+    "integrity"
+  ],
+  "required_claim_registers": [
+    "ENGINEERING_TARGET",
+    "DERIVED"
+  ],
+  "description": "Implementation profile for mission execution and state transfer."
+}

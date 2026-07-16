@@ -1,0 +1,24 @@
+{
+  "codebook_id": "ALVORADA-MISSION-EXAMPLE-0.1",
+  "dictionary_version": "0.1.0",
+  "entries": {
+    "01": "message_id",
+    "02": "in_reply_to",
+    "03": "from",
+    "04": "to",
+    "05": "response_type",
+    "06": "mission_id",
+    "07": "timestamp",
+    "08": "state_version",
+    "09": "alignment",
+    "0A": "authority_status",
+    "20": "authority_registry",
+    "21": "agent_id",
+    "22": "role",
+    "23": "authority",
+    "24": "next_action",
+    "25": "status",
+    "26": "owner",
+    "27": "summary"
+  }
+}

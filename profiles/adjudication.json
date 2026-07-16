@@ -1,0 +1,22 @@
+{
+  "profile_id": "adjudication",
+  "protocol_version": "0.2",
+  "required_top_level_fields": [
+    "protocol",
+    "version",
+    "header",
+    "state",
+    "delta",
+    "claims",
+    "conflicts",
+    "questions",
+    "next_action",
+    "human_note",
+    "integrity"
+  ],
+  "required_claim_registers": [
+    "ESTABLISHED",
+    "DERIVED"
+  ],
+  "description": "Adjudication profile for conflict review and resolution tracking."
+}

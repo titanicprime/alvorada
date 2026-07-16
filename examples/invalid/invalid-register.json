@@ -1,0 +1,43 @@
+{
+  "protocol": "ODEX-IMX",
+  "version": "0.2",
+  "header": {
+    "message_id": "MSG-ACK-0001",
+    "in_reply_to": "MSG-MISSION-0001",
+    "from": "Blue-0",
+    "to": "Red-1",
+    "response_type": "ACK",
+    "mission_id": "MISSION-ALV-001",
+    "timestamp": "2026-07-16T01:00:00Z",
+    "state_version": "state-v1"
+  },
+  "state": {
+    "alignment": "PASS"
+  },
+  "delta": {
+    "operations": [],
+    "parent_state_hash": null,
+    "lineage": []
+  },
+  "claims": [
+    {
+      "claim_id": "CLM-ACK-0001",
+      "register": "SPECULATION",
+      "body": "Blue-0 confirms receipt of mission MISSION-ALV-001.",
+      "authority_status": "LIMITED"
+    }
+  ],
+  "conflicts": [],
+  "questions": [],
+  "next_action": {
+    "status": "READY",
+    "owner": "Blue-0",
+    "summary": "Begin mission execution."
+  },
+  "human_note": {
+    "summary": "Receipt acknowledgement only; no truth claim is implied."
+  },
+  "integrity": {
+    "sha256": "620f8face5e5528e754ca036efdea2a03efdf56cbe90fe7ec3b06fb2beae7b31"
+  }
+}
