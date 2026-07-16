@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schema/odex-imx-ack-v0.2.schema.json",
+  "allOf": [
+    {
+      "$ref": "odex-imx-v0.2.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "header": {
+          "type": "object",
+          "properties": {
+            "response_type": {
+              "const": "ACK"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

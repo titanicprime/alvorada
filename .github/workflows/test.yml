@@ -1,0 +1,21 @@
+
+name: test
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e .[dev]
+      - run: pytest -q tests/test_schema_validation.py tests/test_examples.py tests/test_canonicalization.py tests/test_hashing.py tests/test_codebook.py tests/test_delta_roundtrip.py tests/test_lineage.py

@@ -1,0 +1,63 @@
+{
+  "protocol": "ODEX-IMX",
+  "version": "0.2",
+  "header": {
+    "message_id": "MSG-STATE-0001",
+    "in_reply_to": "MSG-MISSION-0001",
+    "from": "Blue-0",
+    "to": "Red-1",
+    "response_type": "STATE_UPDATE",
+    "mission_id": "MISSION-ALV-001",
+    "timestamp": "2026-07-16T01:30:00Z",
+    "state_version": "state-v1"
+  },
+  "state": {
+    "alignment": "PARTIAL",
+    "task": {
+      "status": "in_progress"
+    }
+  },
+  "delta": {
+    "operations": [
+      {
+        "delta_id": "DELTA-0001",
+        "operation": "ADD",
+        "target": "/task",
+        "prior_hash": null,
+        "resulting_value": {
+          "status": "in_progress"
+        },
+        "basis": {
+          "reason": "Initial task state created."
+        },
+        "claim_refs": [
+          "CLM-STATE-0001"
+        ],
+        "timestamp": "2026-07-16T01:30:00Z"
+      }
+    ],
+    "parent_state_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "lineage": []
+  },
+  "claims": [
+    {
+      "claim_id": "CLM-STATE-0001",
+      "register": "DERIVED",
+      "body": "Task execution has started.",
+      "authority_status": "LIMITED"
+    }
+  ],
+  "conflicts": [],
+  "questions": [],
+  "next_action": {
+    "status": "READY",
+    "owner": "Blue-0",
+    "summary": "Continue mission execution."
+  },
+  "human_note": {
+    "summary": "Only task-relevant delta is transmitted."
+  },
+  "integrity": {
+    "sha256": "054f6beb30c5ccb2880f2e081cb7820952b1cf2166ad550d6c51735a59621b14"
+  }
+}

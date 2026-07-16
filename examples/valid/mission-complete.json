@@ -1,0 +1,44 @@
+{
+  "protocol": "ODEX-IMX",
+  "version": "0.2",
+  "header": {
+    "message_id": "MSG-COMPLETE-0001",
+    "in_reply_to": "MSG-MISSION-0001",
+    "from": "Blue-0",
+    "to": "Red-1",
+    "response_type": "MISSION_COMPLETE",
+    "mission_id": "MISSION-ALV-001",
+    "timestamp": "2026-07-16T02:00:00Z",
+    "state_version": "state-v2"
+  },
+  "state": {
+    "alignment": "PASS",
+    "result_summary": "Mission completed with deterministic state replay preserved."
+  },
+  "delta": {
+    "operations": [],
+    "parent_state_hash": null,
+    "lineage": []
+  },
+  "claims": [
+    {
+      "claim_id": "CLM-COMPLETE-0001",
+      "register": "DERIVED",
+      "body": "Replay completed and final state hash matched expected output.",
+      "authority_status": "LIMITED"
+    }
+  ],
+  "conflicts": [],
+  "questions": [],
+  "next_action": {
+    "status": "COMPLETE",
+    "owner": "Red-1",
+    "summary": "Review completion and archive lineage."
+  },
+  "human_note": {
+    "summary": "Completion indicates transport success, not truth of underlying claims."
+  },
+  "integrity": {
+    "sha256": "c13b5ab80a6dc22b6f05716c595960e997b6db7440a2495d3d30ae636d34b320"
+  }
+}

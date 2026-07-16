@@ -1,0 +1,11 @@
+
+name: Dictionary term
+description: Propose a canonical dictionary change.
+title: "dictionary: "
+body:
+  - type: textarea
+    id: term
+    attributes:
+      label: Term proposal
+    validations:
+      required: true

@@ -1,0 +1,42 @@
+{
+  "status_values": {
+    "dictionary_status": [
+      "CURRENT",
+      "SUPERSEDED",
+      "REVOKED",
+      "DRAFT"
+    ],
+    "alignment": [
+      "PASS",
+      "PARTIAL",
+      "FAIL"
+    ],
+    "authority_status": [
+      "VALID",
+      "LIMITED",
+      "EXPIRED",
+      "REVOKED",
+      "UNKNOWN"
+    ],
+    "conflict_severity": [
+      "INFO",
+      "WARNING",
+      "ERROR",
+      "FATAL"
+    ],
+    "conflict_resolution_state": [
+      "OPEN",
+      "PROPOSED",
+      "RESOLVED",
+      "DEFERRED",
+      "REJECTED"
+    ],
+    "next_action": [
+      "READY",
+      "WAITING",
+      "BLOCKED",
+      "COMPLETE",
+      "FAILED"
+    ]
+  }
+}

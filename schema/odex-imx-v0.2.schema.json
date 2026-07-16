@@ -1,0 +1,417 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schema/odex-imx-v0.2.schema.json",
+  "title": "ODEX-IMX Envelope v0.2",
+  "type": "object",
+  "required": [
+    "protocol",
+    "version",
+    "header",
+    "state",
+    "delta",
+    "claims",
+    "conflicts",
+    "questions",
+    "next_action",
+    "human_note",
+    "integrity"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "protocol": {
+      "const": "ODEX-IMX"
+    },
+    "version": {
+      "const": "0.2"
+    },
+    "header": {
+      "type": "object",
+      "required": [
+        "message_id",
+        "in_reply_to",
+        "from",
+        "to",
+        "response_type",
+        "mission_id",
+        "timestamp",
+        "state_version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "in_reply_to": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "response_type": {
+          "type": "string",
+          "enum": [
+            "ACK",
+            "MISSION",
+            "MISSION_COMPLETE",
+            "MISSION_FAILED",
+            "BLOCKED",
+            "REQUEST_CLARIFICATION",
+            "STATE_UPDATE",
+            "PROTOCOL_EXCEPTION"
+          ]
+        },
+        "mission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "state_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "alignment": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "PARTIAL",
+            "FAIL"
+          ]
+        },
+        "authority_registry": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "agent_id",
+              "role",
+              "authority"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "agent_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string",
+                "minLength": 1
+              },
+              "authority": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "delta": {
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "delta_id",
+              "operation",
+              "target",
+              "prior_hash",
+              "resulting_value",
+              "basis",
+              "claim_refs",
+              "timestamp"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "delta_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "operation": {
+                "type": "string",
+                "enum": [
+                  "ADD",
+                  "MODIFY",
+                  "SUPERSEDE",
+                  "REJECT",
+                  "VERIFY_UNCHANGED"
+                ]
+              },
+              "target": {
+                "type": "string",
+                "pattern": "^(/([^/~]|~0|~1)*)*$"
+              },
+              "prior_hash": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "resulting_value": {},
+              "basis": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "additionalProperties": true,
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "claim_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "parent_state_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "lineage": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "operations": [],
+        "lineage": []
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "claim_id",
+          "register",
+          "body"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "claim_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "register": {
+            "type": "string",
+            "enum": [
+              "ESTABLISHED",
+              "DERIVED",
+              "HYPOTHESIS",
+              "ENGINEERING_TARGET",
+              "METAPHOR"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "authority_status": {
+            "type": "string",
+            "enum": [
+              "VALID",
+              "LIMITED",
+              "EXPIRED",
+              "REVOKED",
+              "UNKNOWN"
+            ]
+          },
+          "role_assignment": {
+            "type": "object",
+            "required": [
+              "subject",
+              "role",
+              "assigned_by"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "subject": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string",
+                "minLength": 1
+              },
+              "assigned_by": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "conflict_id",
+          "type",
+          "severity",
+          "resolution_state",
+          "summary"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "conflict_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "INFO",
+              "WARNING",
+              "ERROR",
+              "FATAL"
+            ]
+          },
+          "resolution_state": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "PROPOSED",
+              "RESOLVED",
+              "DEFERRED",
+              "REJECTED"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "question_id",
+          "prompt",
+          "status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "READY",
+              "WAITING",
+              "BLOCKED",
+              "COMPLETE",
+              "FAILED"
+            ]
+          }
+        }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "required": [
+        "status",
+        "owner",
+        "summary"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "READY",
+            "WAITING",
+            "BLOCKED",
+            "COMPLETE",
+            "FAILED"
+          ]
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "human_note": {
+      "type": "object",
+      "required": [
+        "summary"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "required": [
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

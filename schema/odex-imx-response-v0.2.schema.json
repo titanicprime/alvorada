@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schema/odex-imx-response-v0.2.schema.json",
+  "allOf": [
+    {
+      "$ref": "odex-imx-v0.2.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "header": {
+          "type": "object",
+          "properties": {
+            "response_type": {
+              "enum": [
+                "ACK",
+                "MISSION_COMPLETE",
+                "MISSION_FAILED",
+                "BLOCKED",
+                "REQUEST_CLARIFICATION",
+                "STATE_UPDATE",
+                "PROTOCOL_EXCEPTION"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

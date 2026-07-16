@@ -1,0 +1,19 @@
+{
+  "profile_id": "minimal",
+  "protocol_version": "0.2",
+  "required_top_level_fields": [
+    "protocol",
+    "version",
+    "header",
+    "state",
+    "delta",
+    "claims",
+    "conflicts",
+    "questions",
+    "next_action",
+    "human_note",
+    "integrity"
+  ],
+  "required_claim_registers": [],
+  "description": "Baseline schema-valid envelope requirements."
+}

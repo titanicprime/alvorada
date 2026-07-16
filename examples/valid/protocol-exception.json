@@ -1,0 +1,51 @@
+{
+  "protocol": "ODEX-IMX",
+  "version": "0.2",
+  "header": {
+    "message_id": "MSG-EXCEPTION-0001",
+    "in_reply_to": "MSG-STATE-0001",
+    "from": "Red-1",
+    "to": "Blue-0",
+    "response_type": "PROTOCOL_EXCEPTION",
+    "mission_id": "MISSION-ALV-001",
+    "timestamp": "2026-07-16T01:45:00Z",
+    "state_version": "state-v1"
+  },
+  "state": {
+    "alignment": "FAIL"
+  },
+  "delta": {
+    "operations": [],
+    "parent_state_hash": null,
+    "lineage": []
+  },
+  "claims": [
+    {
+      "claim_id": "CLM-EXC-0001",
+      "register": "ESTABLISHED",
+      "body": "A recoverable protocol exception was detected and reported explicitly.",
+      "authority_status": "VALID"
+    }
+  ],
+  "conflicts": [
+    {
+      "conflict_id": "CNF-0001",
+      "type": "HASH_MISMATCH",
+      "severity": "ERROR",
+      "resolution_state": "OPEN",
+      "summary": "Reported example protocol exception for deterministic handling tests."
+    }
+  ],
+  "questions": [],
+  "next_action": {
+    "status": "BLOCKED",
+    "owner": "Blue-0",
+    "summary": "Await corrected upstream state hash."
+  },
+  "human_note": {
+    "summary": "Protocol exception reporting is explicit and machine-testable."
+  },
+  "integrity": {
+    "sha256": "554dc10841c856d11963793bdac4a21c1b2499656e0e8ec9e268d4266f786301"
+  }
+}

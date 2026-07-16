@@ -1,0 +1,12 @@
+{
+  "dictionary_id": "ALVORADA-CANONICAL-DICTIONARY",
+  "version": "0.1.0",
+  "aliases": {
+    "msg_id": "message_id",
+    "reply_to": "in_reply_to",
+    "sender": "from",
+    "recipient": "to",
+    "msg_type": "response_type",
+    "prev_hash": "prior_hash"
+  }
+}
