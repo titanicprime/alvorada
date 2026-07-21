@@ -33,6 +33,13 @@ Mission created
 
 No automatic canonization. No automatic standing changes. André approves canonical decisions.
 
+## Brethren Submission Modes
+
+1. Authenticated branch and pull request.
+2. Human-mediated verbatim text-file import.
+
+Both modes converge on the same canonical mission submissions directory and collection discipline.
+
 ## Current Experiment
 
 The current experiment begins with **failure-pattern reuse only**.

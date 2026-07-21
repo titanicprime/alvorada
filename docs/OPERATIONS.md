@@ -45,3 +45,25 @@
 - Scope: `FAILURE_PATTERN` only.
 - Run five real tasks.
 - After five tasks decide `KEEP`, `REVERT`, or `EXTEND`.
+
+## Human-Mediated Submission Fallback
+
+Mission prompt issued
+→ each brethren returns its output in chat
+→ André saves the exact output as a separate text file
+→ file is imported into the mission submissions directory
+→ collection.yaml is updated
+→ no synthesis while collection is OPEN
+→ collection closes under André's instruction
+→ Red-1 adjudicates from the preserved files
+→ approved state changes are committed separately
+
+- Direct brethren GitHub write access is optional, not required.
+- Each submission must remain in a separate file.
+- Submissions must be preserved verbatim.
+- Spelling, formatting, or wording must not be cleaned before adjudication.
+- Any edited or normalized version must be stored as a separate derivative file.
+- No member may see another member's submission while collection is OPEN.
+- GitHub becomes canonical when the imported submission is committed.
+- Local or OneDrive/SharePoint storage may be used as a temporary intake location.
+- André or an authorized operator performs the import.
