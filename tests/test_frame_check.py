@@ -2,8 +2,8 @@
 test_frame_check.py — Unit tests for scripts/frame_check.py
 """
 
-import sys
 import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -12,14 +12,15 @@ from pathlib import Path
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-import yaml
-import frame_check as fc
-
+import frame_check as fc  # noqa: E402
+import yaml  # noqa: E402
 
 ACTIVE_COLLECTION_PATTERN = {
     "asset_id": "FP-001",
     "type": "FAILURE_PATTERN",
-    "statement": "Do not synthesize independent member submissions before collection is explicitly closed.",
+    "statement": (
+        "Do not synthesize independent member submissions before collection is explicitly closed."
+    ),
     "conditions": "Multiple independent submissions are expected.",
     "origin_mission": "ALVORADA_MISSION_001",
     "status": "ACTIVE",
@@ -45,7 +46,6 @@ SUSPENDED_PATTERN = {
 
 
 class TestFrameCheck(unittest.TestCase):
-
     def test_matches_collection_closure_pattern(self):
         """A work item about independent submissions should match FP-001."""
         work_item = {
@@ -104,7 +104,6 @@ class TestFrameCheck(unittest.TestCase):
             loaded_patterns = fc.load_failure_patterns(Path(patterns_path))
             matched = fc.run_frame_check(loaded_work_item, loaded_patterns)
 
-            from pathlib import Path as P
             output_data = dict(loaded_work_item)
             output_data["failure_memory"] = [
                 {
@@ -114,12 +113,12 @@ class TestFrameCheck(unittest.TestCase):
                 }
                 for p in matched
             ]
-            P(output_path).write_text(
+            Path(output_path).write_text(
                 yaml.dump(output_data, allow_unicode=True, sort_keys=False),
                 encoding="utf-8",
             )
 
-            result = fc.load_file(P(output_path))
+            result = fc.load_file(Path(output_path))
             self.assertIn("failure_memory", result)
             self.assertTrue(len(result["failure_memory"]) > 0)
             self.assertEqual(result["failure_memory"][0]["asset_id"], "FP-001")
@@ -151,9 +150,7 @@ class TestFrameCheck(unittest.TestCase):
             matched = fc.run_frame_check(loaded_work_item, patterns)
 
             output_data = dict(loaded_work_item)
-            output_data["failure_memory"] = [
-                {"asset_id": p.get("asset_id")} for p in matched
-            ]
+            output_data["failure_memory"] = [{"asset_id": p.get("asset_id")} for p in matched]
             Path(output_path).write_text(
                 yaml.dump(output_data, allow_unicode=True, sort_keys=False),
                 encoding="utf-8",
