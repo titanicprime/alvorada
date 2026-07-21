@@ -1,0 +1,20 @@
+- asset_id: FP-001
+  type: FAILURE_PATTERN
+  statement: Do not synthesize independent member submissions before collection is explicitly closed.
+  conditions: Multiple independent submissions are expected.
+  origin_mission: ALVORADA_MISSION_001
+  status: ACTIVE
+
+- asset_id: FP-002
+  type: FAILURE_PATTERN
+  statement: Do not describe ordinary LLM inference as native ISS, CK, AoM, RSS, or Clearframe execution.
+  conditions: Current model behavior is described using Cognous architectural terms.
+  origin_mission: ALVORADA_MISSION_001
+  status: ACTIVE
+
+- asset_id: FP-003
+  type: FAILURE_PATTERN
+  statement: Do not silently overwrite prior canonical state; supersede it and preserve lineage.
+  conditions: A protocol, decision, prompt, or state file is revised.
+  origin_mission: ALVORADA_MISSION_001
+  status: ACTIVE

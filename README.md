@@ -1,5 +1,74 @@
+
+# Alvorada
 
-# Project Alvorada
+Alvorada is a minimal, governed multi-agent coordination experiment.
+
+**GitHub is the canonical machine-writable state store.** SharePoint/OneDrive may later store large source artifacts too heavy for this repository. Members contribute through branches and pull requests. Only approved merges modify canonical state.
+
+## Operating Model
+
+| Role | Identity |
+|------|---------|
+| Captain / constitutional authority | André de Lima |
+| Watcher–Coordinator | Red-1 (does not independently change canon) |
+| Formal Systems analyst | Mr. Gold |
+| Generalization / outside-view analyst | Blue-0 |
+| Adversarial failure-memory analyst | Sienna-4 |
+
+Member instances are temporary LLM processes, replaceable by design. Continuity resides in governed repository state, not in any model.
+
+Current specification: **ODEX-IMX v0.3**. The current implementation only *approximates* ISS, CK, AoM, RSS, and Clearframe. Never claim native execution.
+
+## Minimal Operating Loop
+
+```
+Mission created
+→ members submit independently
+→ collection closes
+→ Red-1 adjudicates
+→ André approves
+→ decision merged
+→ state and failure patterns updated
+```
+
+No automatic canonization. No automatic standing changes. André approves canonical decisions.
+
+## Current Experiment
+
+The current experiment begins with **failure-pattern reuse only**.
+
+Run five real Alvorada tasks:
+
+1. At task start (FRAME): check the work item against `state/failure-patterns.yaml`.
+2. Surface relevant warnings.
+3. Record whether each warning was used.
+4. At task completion: record whether any warned failure recurred.
+5. Add at most one new failure pattern.
+
+After five tasks: decide KEEP, REVERT, or EXTEND.
+
+## Repository Layout
+
+| Path | Purpose |
+|------|---------|
+| `constitution/` | Shared kernel and member role definitions |
+| `state/` | Mutable canonical state (YAML, CSV) |
+| `missions/` | Per-mission artifacts, submissions, adjudications, and decisions |
+| `schemas/` | JSON Schema for state validation |
+| `scripts/` | CLI tools: frame check and state validator |
+| `tests/` | Python unit tests |
+
+## Quick Usage
+
+```bash
+# Check a work item against active failure patterns
+python scripts/frame_check.py --work-item <path.yaml> --failure-patterns state/failure-patterns.yaml
+
+# Validate all state files
+python scripts/validate_state.py
+```
+
+## ODEX-IMX Tooling
 
 Project Alvorada is a private experimental repository for developing machine-verifiable, lineage-preserving communication protocols between heterogeneous AI agents.
 
