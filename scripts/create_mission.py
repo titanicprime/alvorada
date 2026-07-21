@@ -40,13 +40,7 @@ def write_yaml(path: Path, data: dict) -> None:
 
 
 def write_mission_markdown(path: Path, mission_id: str, title: str, question: str) -> None:
-    text = (
-        f"# {mission_id}\n\n"
-        f"## Title\n\n"
-        f"{title}\n\n"
-        f"## Core Question\n\n"
-        f"> {question}\n"
-    )
+    text = f"# {mission_id}\n\n## Title\n\n{title}\n\n## Core Question\n\n> {question}\n"
     path.write_text(text, encoding="utf-8")
 
 
@@ -93,7 +87,9 @@ def create_mission(repo_root: Path, mission_id: str, title: str, question: str) 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Create a new Alvorada mission scaffold.")
-    parser.add_argument("--mission-id", required=True, help="Mission ID (ALVORADA_MISSION_<number>)")
+    parser.add_argument(
+        "--mission-id", required=True, help="Mission ID (ALVORADA_MISSION_<number>)"
+    )
     parser.add_argument("--title", required=True, help="Mission title")
     parser.add_argument("--question", required=True, help="Core mission question")
     return parser.parse_args(argv)

@@ -38,3 +38,21 @@ Optional:
 - Credentials must never be committed.
 - Tokens must be stored in environment secrets.
 - André retains merge authority.
+
+## No-Write-Access Operating Mode
+
+- Public repository access permits anonymous reads but not pushes.
+- Lack of GitHub credentials does not block mission participation.
+- Brethren may return outputs through their native chat environment.
+- André saves each output as a separate UTF-8 text file.
+- GitHub Copilot or another authorized operator imports the file.
+- Direct GitHub credentials should not be provisioned merely for convenience if the environment cannot store them securely.
+
+This mode preserves:
+
+- Independent cognition.
+- Provenance.
+- Attribution.
+- Lineage.
+- Collection discipline.
+- Human merge authority.
