@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "asset-use.schema.json",
+  "title": "AssetUseRecord",
+  "type": "object",
+  "required": ["mission_id", "asset_id", "retrieved", "used", "result"],
+  "additionalProperties": true,
+  "properties": {
+    "mission_id": {
+      "type": "string"
+    },
+    "asset_id": {
+      "type": "string"
+    },
+    "retrieved": {
+      "type": "boolean"
+    },
+    "used": {
+      "type": "boolean"
+    },
+    "result": {
+      "type": "string",
+      "enum": ["helped", "harmed", "neutral", "unclear"]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

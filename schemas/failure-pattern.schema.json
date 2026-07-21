@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "failure-pattern.schema.json",
+  "title": "FailurePattern",
+  "type": "object",
+  "required": ["asset_id", "type", "statement", "conditions", "origin_mission", "status"],
+  "additionalProperties": true,
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "description": "Unique identifier for this failure pattern (e.g. FP-001)"
+    },
+    "type": {
+      "type": "string",
+      "const": "FAILURE_PATTERN"
+    },
+    "statement": {
+      "type": "string",
+      "description": "The failure to avoid, written as an imperative"
+    },
+    "conditions": {
+      "type": "string",
+      "description": "When this pattern applies"
+    },
+    "origin_mission": {
+      "type": "string",
+      "description": "Mission ID that produced this pattern"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PROPOSED", "ACTIVE", "SUSPENDED"]
+    },
+    "keywords": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Optional explicit keywords for retrieval matching"
+    }
+  }
+}

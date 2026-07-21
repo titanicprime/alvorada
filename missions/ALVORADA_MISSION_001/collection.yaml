@@ -1,0 +1,11 @@
+mission_id: ALVORADA_MISSION_001
+status: CLOSED
+expected:
+  - MR_GOLD
+  - BLUE_0
+  - SIENNA_4
+received:
+  - MR_GOLD
+  - BLUE_0
+  - SIENNA_4
+missing: []

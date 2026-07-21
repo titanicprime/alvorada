@@ -1,0 +1,25 @@
+system: ALVORADA
+coordinator: RED-1
+captain: ANDRE_DE_LIMA
+current_specification: ODEX-IMX-v0.3
+current_mission: null
+collection_status: CLOSED
+active_experiment:
+  name: failure-pattern-reuse-pilot
+  scope: FAILURE_PATTERN
+  tasks_completed: 0
+  target_tasks: 5
+accepted_mechanism:
+  name: problem-solving-asset-store
+  active_scope:
+    - FAILURE_PATTERN
+  deferred_scope:
+    - METHOD
+members:
+  expected:
+    - MR_GOLD
+    - BLUE_0
+    - SIENNA_4
+authority:
+  canonical_approval: ANDRE_DE_LIMA
+  coordinator_can_merge_canon: false
