@@ -13,12 +13,10 @@ typecheck:
 test:
 	pytest -q
 
-validate: lint typecheck test
+validate: lint typecheck test human-control-plane-check
 
 human-control-plane:
 	python tools/render_human_control_plane.py
 
 human-control-plane-check:
 	python tools/render_human_control_plane.py > /dev/null
-
-validate: human-control-plane-check

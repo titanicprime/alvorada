@@ -130,6 +130,12 @@ def test_output_provenance_inversion() -> None:
     assert "SELF_ATTESTED_AUTHORITY" in codes(document, "errors")
 
 
+def test_duplicate_rule_identifiers_are_rejected() -> None:
+    document = base_document()
+    document["rules"] = [{"rule_id": "AUTH-HUMAN"}]
+    assert "DUPLICATE_RULE_ID" in codes(document, "errors")
+
+
 def test_mission_without_authority() -> None:
     document = base_document()
     document["missions"] = [{"mission_id": "M1", "authority_source": "MISSING"}]
@@ -263,7 +269,9 @@ def test_delegation_cycle() -> None:
     first.update({"grantor": "A", "grantee": "B"})
     second = delegation("D2")
     second.update({"grantor": "B", "grantee": "A"})
-    document["delegations"] = [first, second]
+    third = delegation("D3")
+    third.update({"grantor": "A", "grantee": "C"})
+    document["delegations"] = [first, second, third]
     assert "DELEGATION_CYCLE" in codes(document, "errors")
 
 

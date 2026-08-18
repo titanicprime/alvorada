@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import re
+from collections import Counter
+from collections.abc import Iterator
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Any
@@ -54,6 +56,27 @@ def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None
     authorities = document.get("authorities", [])
     delegations = document.get("delegations", [])
     records = [*authorities, *delegations]
+    identifier_records = [
+        *records,
+        *document.get("offices", []),
+        *document.get("events", []),
+        *document.get("rules", []),
+        *document.get("claims", []),
+        *document.get("human_texts", []),
+    ]
+    identifiers = [
+        str(record.get("rule_id")) for record in identifier_records if record.get("rule_id")
+    ]
+    duplicates = {identifier for identifier, count in Counter(identifiers).items() if count > 1}
+    for identifier in sorted(duplicates):
+        findings.append(
+            Finding(
+                "ERROR",
+                "DUPLICATE_RULE_ID",
+                f"Rule identifier {identifier!r} is not unique.",
+                identifier,
+            )
+        )
     by_id = {str(record.get("rule_id")): record for record in records if record.get("rule_id")}
 
     for record in records:
@@ -128,27 +151,39 @@ def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None
                 )
             )
 
-    graph = {
-        str(item.get("grantor")): str(item.get("grantee"))
-        for item in delegations
-        if item.get("grantor") and item.get("grantee")
-    }
+    graph: dict[str, set[str]] = {}
+    for item in delegations:
+        if item.get("grantor") and item.get("grantee"):
+            graph.setdefault(str(item["grantor"]), set()).add(str(item["grantee"]))
+    colors: dict[str, int] = {}
+    cycle_detected = False
     for start in graph:
-        seen: set[str] = set()
-        node = start
-        while node in graph:
-            if node in seen:
-                findings.append(
-                    Finding(
-                        "ERROR",
-                        "DELEGATION_CYCLE",
-                        f"Delegation cycle detected from {start!r}.",
-                        start,
-                    )
-                )
-                break
-            seen.add(node)
-            node = graph[node]
+        if colors.get(start, 0) != 0:
+            continue
+        colors[start] = 1
+        pending: list[tuple[str, Iterator[str]]] = [(start, iter(graph.get(start, set())))]
+        while pending:
+            node, children = pending[-1]
+            try:
+                target = next(children)
+            except StopIteration:
+                colors[node] = 2
+                pending.pop()
+                continue
+            target_color = colors.get(target, 0)
+            if target_color == 1:
+                cycle_detected = True
+            elif target_color == 0:
+                colors[target] = 1
+                pending.append((target, iter(graph.get(target, set()))))
+    if cycle_detected:
+        findings.append(
+            Finding(
+                "ERROR",
+                "DELEGATION_CYCLE",
+                "A delegation cycle exists.",
+            )
+        )
 
 
 def _state_checks(document: dict[str, Any], findings: list[Finding]) -> None:

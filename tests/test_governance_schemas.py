@@ -98,6 +98,7 @@ def registry() -> Registry[Any]:
             {
                 "state_id": "STATE-1",
                 "as_of": "2026-08-18T00:00:00Z",
+                "authority_sources": ["source.md"],
                 "authorities": [],
                 "offices": [],
                 "delegations": [],
