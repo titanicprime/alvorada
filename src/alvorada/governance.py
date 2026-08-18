@@ -154,7 +154,7 @@ def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None
                         record,
                     )
                 )
-            elif provenance.get("status") in {"UNKNOWN", "INCOMPLETE"}:
+            elif provenance.get("status") in {"UNKNOWN", "INCOMPLETE", "DISPUTED"}:
                 findings.append(
                     _finding(
                         "WARNING",
@@ -205,16 +205,6 @@ def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None
                     record,
                 )
             )
-        if record.get("authority_basis") == "FOUNDATIONAL":
-            findings.append(
-                _finding(
-                    "ERROR",
-                    "FOUNDATIONAL_DELEGATION",
-                    "Delegated authority cannot be represented as foundational authority.",
-                    record,
-                )
-            )
-
     for delegation in delegations:
         parent = by_id.get(str(delegation.get("authority_source")))
         if (
@@ -443,7 +433,10 @@ def _event_authority_checks(document: dict[str, Any], findings: list[Finding]) -
                     event,
                 )
             )
-        event_scope = _scope(event)
+        scope_value = event.get("event_scope", [])
+        event_scope = (
+            {str(item) for item in scope_value} if isinstance(scope_value, list) else set()
+        )
         if required_scope not in _scope(source) or not event_scope.issubset(_scope(source)):
             findings.append(
                 _finding(
