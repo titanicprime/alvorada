@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alvorada.local/schemas/authority.schema.json",
+  "title": "Authority record",
+  "description": "Records a claimed authority and its provenance without making the claim valid.",
+  "allOf": [{"$ref": "governance-common.schema.json"}],
+  "type": "object",
+  "properties": {
+    "rule_type": {"const": "authority"},
+    "holder": {"type": "string", "minLength": 1},
+    "holder_type": {"enum": ["human", "office", "role", "artificial_intelligence", "UNKNOWN"]},
+    "foundational": {"type": "boolean"}
+  },
+  "required": ["holder", "holder_type", "scope", "authority_source", "provenance"]
+}

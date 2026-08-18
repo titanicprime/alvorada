@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alvorada.local/schemas/governance-event.schema.json",
+  "title": "Governance Event record",
+  "description": "Records an evidenced event. The schema must not be used to invent an event.",
+  "allOf": [{"$ref": "governance-common.schema.json"}],
+  "type": "object",
+  "properties": {
+    "rule_type": {"const": "governance_event"},
+    "event_id": {"type": "string", "minLength": 1},
+    "event_type": {
+      "enum": [
+        "PROPOSAL",
+        "REVIEW",
+        "INSPECTION",
+        "ADJUDICATION",
+        "AUTHORIZATION",
+        "EXECUTION",
+        "CERTIFICATION",
+        "HISTORICAL_INTERPRETATION"
+      ]
+    },
+    "actor": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "evidence": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+  },
+  "required": ["event_id", "event_type", "actor", "subject", "evidence", "provenance"]
+}

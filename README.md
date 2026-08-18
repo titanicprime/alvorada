@@ -3,6 +3,12 @@
 
 Alvorada is a minimal, governed multi-agent coordination experiment.
 
+The repository is transitioning into a governance-engineering substrate that makes governance
+visible, testable, traceable, correctable, portable, and human-controllable. Existing
+governance and historical artifacts remain preserved. Constitution version 2.0 is design work
+only and has not been adopted. Technical standards remain subordinate to constitutional
+governance, and generated human views are not automatically authoritative.
+
 **GitHub is the canonical machine-writable state store.** SharePoint/OneDrive may later store large source artifacts too heavy for this repository. Members contribute through branches and pull requests. Only approved merges modify canonical state.
 
 ## Operating Model
