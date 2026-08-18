@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alvorada.local/schemas/institutional-state.schema.json",
+  "title": "Current institutional state",
+  "description": "Describes current state without treating state as its own authority source.",
+  "type": "object",
+  "properties": {
+    "state_id": {"type": "string", "minLength": 1},
+    "as_of": {"type": "string", "format": "date-time"},
+    "authority_source": {"type": "array", "items": {"type": "string"}},
+    "authorities": {"type": "array", "items": {"type": "string"}},
+    "offices": {"type": "array", "items": {"type": "string"}},
+    "delegations": {"type": "array", "items": {"type": "string"}},
+    "active_missions": {"type": "array", "items": {"type": "string"}},
+    "authoritative_documents": {"type": "array", "items": {"type": "string"}},
+    "disputed": {"type": "array", "items": {"type": "string"}},
+    "unknown": {"type": "array", "items": {"type": "string"}},
+    "historical_dependencies": {"type": "array", "items": {"type": "string"}},
+    "reversibility": {
+      "type": "object",
+      "properties": {
+        "formal": {"type": "array", "items": {"type": "string"}},
+        "practical": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["formal", "practical"],
+      "additionalProperties": false
+    },
+    "requires_human_authorization": {"type": "array", "items": {"type": "string"}},
+    "recent_changes": {"type": "array", "items": {"type": "string"}},
+    "status": {"enum": ["ACTIVE", "UNKNOWN", "DISPUTED"]},
+    "human_explanation": {"type": "string", "minLength": 1},
+    "provenance": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1
+    }
+  },
+  "required": [
+    "state_id",
+    "as_of",
+    "authorities",
+    "offices",
+    "delegations",
+    "active_missions",
+    "disputed",
+    "unknown",
+    "status",
+    "human_explanation",
+    "provenance"
+  ],
+  "additionalProperties": false
+}

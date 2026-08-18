@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alvorada.local/schemas/office.schema.json",
+  "title": "Role and office charter",
+  "description": "Defines an office separately from its incumbent and implementation.",
+  "allOf": [{"$ref": "governance-common.schema.json"}],
+  "type": "object",
+  "properties": {
+    "rule_type": {"const": "office"},
+    "office_id": {"type": "string", "minLength": 1},
+    "incumbent": {"type": ["string", "null"]},
+    "implementation": {"type": ["string", "null"]},
+    "grant_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "required": ["office_id", "scope", "grant_ids"]
+}

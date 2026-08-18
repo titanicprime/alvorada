@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alvorada.local/schemas/delegation.schema.json",
+  "title": "Delegation record",
+  "description": "Records a bounded delegation; delegation does not transfer source authority.",
+  "allOf": [{"$ref": "governance-common.schema.json"}],
+  "type": "object",
+  "properties": {
+    "rule_type": {"const": "delegation"},
+    "grantor": {"type": "string", "minLength": 1},
+    "grantee": {"type": "string", "minLength": 1},
+    "subdelegation": {"enum": ["PROHIBITED", "EXPLICIT_ONLY", "PERMITTED", "UNKNOWN"]}
+  },
+  "required": [
+    "authority_source",
+    "grantor",
+    "grantee",
+    "scope",
+    "subdelegation",
+    "effective_date",
+    "expiry",
+    "provenance"
+  ]
+}
