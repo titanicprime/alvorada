@@ -3,13 +3,25 @@
   "$id": "https://alvorada.local/schemas/delegation.schema.json",
   "title": "Delegation record",
   "description": "Records a bounded delegation; delegation does not transfer source authority.",
-  "allOf": [{"$ref": "governance-common.schema.json"}],
   "type": "object",
   "properties": {
     "rule_type": {"const": "delegation"},
     "grantor": {"type": "string", "minLength": 1},
     "grantee": {"type": "string", "minLength": 1},
-    "subdelegation": {"enum": ["PROHIBITED", "EXPLICIT_ONLY", "PERMITTED", "UNKNOWN"]}
+    "subdelegation": {"enum": ["PROHIBITED", "EXPLICIT_ONLY", "PERMITTED", "UNKNOWN"]},
+    "emergency": {"type": "boolean"},
+    "trigger": {"type": "string", "minLength": 1},
+    "termination_condition": {"type": "string", "minLength": 1},
+    "self_extension": {"enum": ["PROHIBITED", "SEPARATELY_AUTHORIZED"]},
+    "extension_authority_source": {"type": "string", "minLength": 1},
+    "amendable_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "not": {"enum": ["trigger", "scope", "duration", "authority_source"]}
+      },
+      "uniqueItems": true
+    }
   },
   "required": [
     "authority_source",
@@ -20,5 +32,34 @@
     "effective_date",
     "expiry",
     "provenance"
+  ],
+  "allOf": [
+    {"$ref": "governance-common.schema.json"},
+    {
+      "if": {
+        "properties": {"emergency": {"const": true}},
+        "required": ["emergency"]
+      },
+      "then": {
+        "required": [
+          "trigger",
+          "review_path",
+          "termination_condition",
+          "self_extension"
+        ],
+        "properties": {
+          "scope": {"minItems": 1},
+          "expiry": {"type": "string", "format": "date-time"},
+          "review_path": {"minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"self_extension": {"const": "SEPARATELY_AUTHORIZED"}},
+        "required": ["self_extension"]
+      },
+      "then": {"required": ["extension_authority_source"]}
+    }
   ]
 }

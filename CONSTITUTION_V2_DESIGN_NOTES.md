@@ -47,10 +47,9 @@ or supersedes it through a valid process.
 20. Constitutional amendment, structural amendment, and refounding are distinct and require
     distinct human authorization paths.
 21. Binding governance must remain human-readable. Every three-letter acronym in
-    human-facing text must be expanded on first use.
+    human-facing text must be spelled out every time it appears.
 22. Truth is external to both model and institution. Governance establishes warranted
     reliance and procedural validity, not truth.
 23. Understanding is a light, not a lever.
 24. Legitimate human agency must not be covertly collapsed through cognitive asymmetry,
     urgency, dependency, framing, or superior capability.
-
