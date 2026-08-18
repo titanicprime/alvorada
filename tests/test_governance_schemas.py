@@ -36,14 +36,19 @@ def registry() -> Registry[Any]:
             {
                 "rule_id": "AUTH-1",
                 "rule_type": "authority",
-                "authority_source": "HUMAN-SOURCE",
+                "authority_basis": "FOUNDATIONAL",
+                "foundational_basis": {
+                    "claim_type": "HUMAN_AUTHORITY_CLAIM",
+                    "evidence": [],
+                    "provenance_status": "UNKNOWN",
+                },
                 "purpose": "Record an evidenced authority claim.",
                 "scope": ["review"],
                 "holder": "HUMAN",
                 "holder_type": "human",
                 "status": "PROPOSED",
                 "human_explanation": "A proposal only.",
-                "provenance": {"artifact": "source.md", "authorized_by": "HUMAN"},
+                "provenance": {"artifact": None, "authorized_by": None, "status": "UNKNOWN"},
             },
         ),
         (
@@ -98,7 +103,7 @@ def registry() -> Registry[Any]:
             {
                 "state_id": "STATE-1",
                 "as_of": "2026-08-18T00:00:00Z",
-                "authority_sources": ["source.md"],
+                "authority_sources": [{"id": "source.md", "resolution": "EXTERNAL"}],
                 "authorities": [],
                 "offices": [],
                 "delegations": [],
@@ -117,3 +122,82 @@ def test_initial_governance_schema_accepts_human_readable_record(
 ) -> None:
     validator = Draft202012Validator(load(schema_name), registry=registry())
     assert not list(validator.iter_errors(record))
+
+
+def test_derived_authority_requires_upstream_source() -> None:
+    record = {
+        "rule_id": "AUTH-1",
+        "rule_type": "authority",
+        "authority_basis": "DERIVED",
+        "purpose": "Represent a derived claim.",
+        "scope": ["review"],
+        "holder": "REVIEWER",
+        "holder_type": "role",
+        "status": "PROPOSED",
+        "human_explanation": "A proposed claim.",
+        "provenance": {"artifact": "source.md", "authorized_by": "HUMAN"},
+    }
+    validator = Draft202012Validator(load("authority.schema.json"), registry=registry())
+    assert list(validator.iter_errors(record))
+
+
+def test_foundational_authority_cannot_name_upstream_source() -> None:
+    record = {
+        "rule_id": "AUTH-1",
+        "rule_type": "authority",
+        "authority_basis": "FOUNDATIONAL",
+        "authority_source": "FICTIONAL-SOURCE",
+        "foundational_basis": {
+            "claim_type": "HUMAN_AUTHORITY_CLAIM",
+            "evidence": [],
+            "provenance_status": "UNKNOWN",
+        },
+        "purpose": "Represent an unresolved foundational claim.",
+        "scope": [],
+        "holder": "HUMAN",
+        "holder_type": "human",
+        "status": "UNKNOWN",
+        "human_explanation": "The provenance remains unknown.",
+        "provenance": {"artifact": None, "authorized_by": None, "status": "UNKNOWN"},
+    }
+    validator = Draft202012Validator(load("authority.schema.json"), registry=registry())
+    assert list(validator.iter_errors(record))
+
+
+def test_consequential_event_schema_requires_authority() -> None:
+    record = {
+        "rule_id": "EVENT-1",
+        "rule_type": "governance_event",
+        "purpose": "Record an authorization claim.",
+        "event_id": "EVENT-1",
+        "event_type": "AUTHORIZATION",
+        "actor": "AUTHOR",
+        "subject": "RULE-1",
+        "evidence": ["authorization.md"],
+        "status": "PROPOSED",
+        "human_explanation": "An example only.",
+        "provenance": {"artifact": "authorization.md", "authorized_by": "AUTHOR"},
+    }
+    validator = Draft202012Validator(load("governance-event.schema.json"), registry=registry())
+    assert list(validator.iter_errors(record))
+
+
+def test_emergency_delegation_schema_requires_bounds() -> None:
+    record = {
+        "rule_id": "DEL-1",
+        "rule_type": "delegation",
+        "authority_source": "AUTH-1",
+        "purpose": "Represent an emergency delegation.",
+        "scope": ["coordinate"],
+        "grantor": "HUMAN",
+        "grantee": "COORDINATOR",
+        "subdelegation": "PROHIBITED",
+        "effective_date": None,
+        "expiry": None,
+        "status": "PROPOSED",
+        "human_explanation": "An incomplete example.",
+        "provenance": {"artifact": "source.md", "authorized_by": "HUMAN"},
+        "emergency": True,
+    }
+    validator = Draft202012Validator(load("delegation.schema.json"), registry=registry())
+    assert list(validator.iter_errors(record))

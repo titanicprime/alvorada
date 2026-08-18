@@ -28,6 +28,12 @@
       "additionalProperties": false
     },
     "supersedes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "replaces": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      ]
+    },
     "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
     "effective_date": {"type": ["string", "null"], "format": "date-time"},
     "expiry": {"type": ["string", "null"], "format": "date-time"},
@@ -49,11 +55,11 @@
     "provenance": {
       "type": "object",
       "properties": {
-        "artifact": {"type": "string", "minLength": 1},
-        "authorized_by": {"type": "string", "minLength": 1},
+        "artifact": {"type": ["string", "null"], "minLength": 1},
+        "authorized_by": {"type": ["string", "null"], "minLength": 1},
+        "status": {"enum": ["DOCUMENTED", "UNKNOWN", "INCOMPLETE", "DISPUTED"]},
         "recorded_at": {"type": ["string", "null"], "format": "date-time"}
       },
-      "required": ["artifact", "authorized_by"],
       "additionalProperties": false
     }
   },

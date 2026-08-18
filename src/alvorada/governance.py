@@ -8,7 +8,22 @@ from datetime import UTC, datetime
 from typing import Any
 
 THREE_LETTER_ACRONYM = re.compile(r"\b[A-Z]{3}\b")
+WORD = re.compile(r"[A-Za-z]+")
 VALID_UNKNOWN_STATES = {"UNKNOWN", "UNRESOLVED", "DISPUTED", "NOT TESTED", "INAPPLICABLE"}
+AUTHORITY_EVENT_SCOPES = {
+    "ADJUDICATION": "adjudicate",
+    "AUTHORIZATION": "authorize",
+    "EXECUTION": "execute",
+    "CERTIFICATION": "certify",
+}
+REFERENCE_TARGETS = {
+    "authority_sources": ("authorities", "delegations"),
+    "authorities": ("authorities",),
+    "offices": ("offices",),
+    "delegations": ("delegations",),
+    "active_missions": ("missions",),
+}
+EMERGENCY_IMMUTABLE_FIELDS = {"trigger", "scope", "duration", "authority_source"}
 
 
 @dataclass(frozen=True)
@@ -20,7 +35,12 @@ class Finding:
 
 
 def _finding(severity: str, code: str, message: str, record: dict[str, Any]) -> Finding:
-    record_id = record.get("rule_id") or record.get("mission_id") or record.get("office_id")
+    record_id = (
+        record.get("rule_id")
+        or record.get("event_id")
+        or record.get("mission_id")
+        or record.get("office_id")
+    )
     return Finding(severity, code, message, str(record_id) if record_id else None)
 
 
@@ -52,6 +72,28 @@ def _has_provenance(record: dict[str, Any]) -> bool:
     )
 
 
+def _grant_is_current(record: dict[str, Any], as_of: datetime) -> bool:
+    expiry = _parse_time(record.get("expiry"))
+    return _active(record) and (expiry is None or expiry >= as_of)
+
+
+def _record_id(record: dict[str, Any]) -> str | None:
+    value = (
+        record.get("rule_id")
+        or record.get("event_id")
+        or record.get("office_id")
+        or record.get("mission_id")
+    )
+    return str(value) if value else None
+
+
+def _actor_for_grant(record: dict[str, Any]) -> str | None:
+    value = (
+        record.get("grantee") if record.get("rule_type") == "delegation" else record.get("holder")
+    )
+    return str(value) if value else None
+
+
 def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None:
     authorities = document.get("authorities", [])
     delegations = document.get("delegations", [])
@@ -81,10 +123,51 @@ def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None
 
     for record in records:
         source = record.get("authority_source")
-        if (
-            source
-            and source not in by_id
-            and source not in document.get("external_authorities", [])
+        foundational = record.get("authority_basis") == "FOUNDATIONAL"
+        if foundational:
+            if source:
+                findings.append(
+                    _finding(
+                        "ERROR",
+                        "FOUNDATIONAL_AUTHORITY_HAS_UPSTREAM_SOURCE",
+                        "A foundational authority claim cannot manufacture an upstream source.",
+                        record,
+                    )
+                )
+            if record.get("holder_type") != "human" or record.get("rule_type") != "authority":
+                findings.append(
+                    _finding(
+                        "ERROR",
+                        "INVALID_FOUNDATIONAL_AUTHORITY_CLAIM",
+                        "Only an authority record for a human may represent "
+                        "foundational authority.",
+                        record,
+                    )
+                )
+            provenance = record.get("provenance")
+            if not isinstance(provenance, dict):
+                findings.append(
+                    _finding(
+                        "ERROR",
+                        "BROKEN_PROVENANCE",
+                        "A foundational authority claim must preserve provenance.",
+                        record,
+                    )
+                )
+            elif provenance.get("status") in {"UNKNOWN", "INCOMPLETE"}:
+                findings.append(
+                    _finding(
+                        "WARNING",
+                        "FOUNDATIONAL_PROVENANCE_UNVERIFIED",
+                        "The foundational authority claim preserves unknown or "
+                        "incomplete provenance.",
+                        record,
+                    )
+                )
+            continue
+
+        if not source or (
+            source not in by_id and source not in document.get("external_authorities", [])
         ):
             findings.append(
                 _finding(
@@ -122,15 +205,12 @@ def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None
                     record,
                 )
             )
-        if (
-            record.get("holder_type") == "artificial_intelligence"
-            and record.get("foundational") is True
-        ):
+        if record.get("authority_basis") == "FOUNDATIONAL":
             findings.append(
                 _finding(
                     "ERROR",
-                    "ARTIFICIAL_FOUNDATIONAL_AUTHORITY",
-                    "Artificial intelligence cannot claim foundational human authority.",
+                    "FOUNDATIONAL_DELEGATION",
+                    "Delegated authority cannot be represented as foundational authority.",
                     record,
                 )
             )
@@ -205,7 +285,36 @@ def _state_checks(document: dict[str, Any], findings: list[Finding]) -> None:
             )
         if delegation.get("emergency") is True:
             parent = grants.get(str(delegation.get("authority_source")))
-            if parent and not _scope(delegation).issubset(_scope(parent)):
+            missing = [
+                field
+                for field in (
+                    "trigger",
+                    "expiry",
+                    "review_path",
+                    "termination_condition",
+                    "self_extension",
+                )
+                if not delegation.get(field)
+            ]
+            if missing:
+                findings.append(
+                    _finding(
+                        "ERROR",
+                        "INCOMPLETE_EMERGENCY_DELEGATION",
+                        f"Emergency delegation lacks: {', '.join(missing)}.",
+                        delegation,
+                    )
+                )
+            if not parent or not _grant_is_current(parent, as_of):
+                findings.append(
+                    _finding(
+                        "ERROR",
+                        "EMERGENCY_WITHOUT_ACTIVE_AUTHORITY",
+                        "Emergency delegation lacks valid active upstream authority.",
+                        delegation,
+                    )
+                )
+            elif not _scope(delegation).issubset(_scope(parent)):
                 findings.append(
                     _finding(
                         "ERROR",
@@ -214,6 +323,33 @@ def _state_checks(document: dict[str, Any], findings: list[Finding]) -> None:
                         delegation,
                     )
                 )
+            amendable = {str(field) for field in delegation.get("amendable_fields", [])}
+            if amendable & EMERGENCY_IMMUTABLE_FIELDS:
+                findings.append(
+                    _finding(
+                        "ERROR",
+                        "EMERGENCY_SELF_REDEFINITION",
+                        "Emergency authority cannot redefine its trigger, scope, "
+                        "duration, or source.",
+                        delegation,
+                    )
+                )
+            if delegation.get("self_extension") == "SEPARATELY_AUTHORIZED":
+                extension = grants.get(str(delegation.get("extension_authority_source")))
+                if (
+                    not extension
+                    or extension is delegation
+                    or not _grant_is_current(extension, as_of)
+                    or "extend_emergency" not in _scope(extension)
+                ):
+                    findings.append(
+                        _finding(
+                            "ERROR",
+                            "UNAUTHORIZED_EMERGENCY_EXTENSION",
+                            "Emergency extension lacks separate active authority.",
+                            delegation,
+                        )
+                    )
 
     for office in document.get("offices", []):
         valid_scope: set[str] = set()
@@ -243,7 +379,11 @@ def _state_checks(document: dict[str, Any], findings: list[Finding]) -> None:
 
     for mission in document.get("missions", []):
         source = grants.get(str(mission.get("authority_source")))
-        if not source or "create_mission" not in _scope(source):
+        if (
+            not source
+            or not _grant_is_current(source, as_of)
+            or "create_mission" not in _scope(source)
+        ):
             findings.append(
                 _finding(
                     "ERROR",
@@ -254,12 +394,86 @@ def _state_checks(document: dict[str, Any], findings: list[Finding]) -> None:
             )
 
 
+def _event_authority_checks(document: dict[str, Any], findings: list[Finding]) -> None:
+    as_of = _parse_time(document.get("as_of")) or datetime.now(UTC)
+    grants = {
+        str(record.get("rule_id")): record
+        for record in [*document.get("authorities", []), *document.get("delegations", [])]
+        if record.get("rule_id")
+    }
+    for event in document.get("events", []):
+        required_scope = AUTHORITY_EVENT_SCOPES.get(str(event.get("event_type")))
+        if not required_scope:
+            continue
+        if not _has_provenance(event):
+            findings.append(
+                _finding(
+                    "ERROR",
+                    "EVENT_BROKEN_PROVENANCE",
+                    "An authority-exercising event must preserve provenance.",
+                    event,
+                )
+            )
+        source = grants.get(str(event.get("authority_source")))
+        if not source:
+            findings.append(
+                _finding(
+                    "ERROR",
+                    "EVENT_WITHOUT_AUTHORITY",
+                    "The event does not reference an existing authority source.",
+                    event,
+                )
+            )
+            continue
+        if not _grant_is_current(source, as_of):
+            findings.append(
+                _finding(
+                    "ERROR",
+                    "EVENT_WITHOUT_ACTIVE_AUTHORITY",
+                    "The event authority source is inactive or expired.",
+                    event,
+                )
+            )
+        if _actor_for_grant(source) != str(event.get("actor")):
+            findings.append(
+                _finding(
+                    "ERROR",
+                    "EVENT_ACTOR_NOT_ENTITLED",
+                    "The event actor is not the holder or grantee of the authority source.",
+                    event,
+                )
+            )
+        event_scope = _scope(event)
+        if required_scope not in _scope(source) or not event_scope.issubset(_scope(source)):
+            findings.append(
+                _finding(
+                    "ERROR",
+                    "EVENT_SCOPE_EXCEEDS_AUTHORITY",
+                    "The event function or scope exceeds its authority source.",
+                    event,
+                )
+            )
+
+
 def _lineage_checks(document: dict[str, Any], findings: list[Finding]) -> None:
-    records = document.get("rules", [])
-    ids = {str(record.get("rule_id")) for record in records}
+    records = [
+        *document.get("authorities", []),
+        *document.get("delegations", []),
+        *document.get("offices", []),
+        *document.get("events", []),
+        *document.get("rules", []),
+    ]
+    ids = {identifier for record in records if (identifier := _record_id(record))}
     definitions: dict[str, str] = {}
     for record in records:
-        for predecessor in record.get("supersedes", []):
+        replaces = record.get("replaces", [])
+        replacement_ids = [replaces] if isinstance(replaces, str) else replaces
+        lineage = [
+            *record.get("supersedes", []),
+            *replacement_ids,
+            *record.get("dependencies", []),
+        ]
+        for predecessor in lineage:
             if str(predecessor) not in ids:
                 findings.append(
                     _finding(
@@ -269,7 +483,9 @@ def _lineage_checks(document: dict[str, Any], findings: list[Finding]) -> None:
                         record,
                     )
                 )
-        if record.get("replaces") and not record.get("supersedes"):
+        if replacement_ids and not set(map(str, replacement_ids)).issubset(
+            set(map(str, record.get("supersedes", [])))
+        ):
             findings.append(
                 _finding(
                     "ERROR",
@@ -295,12 +511,12 @@ def _lineage_checks(document: dict[str, Any], findings: list[Finding]) -> None:
 
 
 def _separation_checks(document: dict[str, Any], findings: list[Finding]) -> None:
-    functions: dict[str, dict[str, str]] = {}
+    functions: dict[str, dict[str, set[str]]] = {}
     for event in document.get("events", []):
         subject = str(event.get("subject", ""))
         event_type = str(event.get("event_type", ""))
         actor = str(event.get("actor", ""))
-        functions.setdefault(subject, {})[event_type] = actor
+        functions.setdefault(subject, {}).setdefault(event_type, set()).add(actor)
 
     pairs = [
         ("PROPOSAL", "AUTHORIZATION", "PROPOSAL_AUTHORIZATION_COLLAPSE"),
@@ -309,16 +525,18 @@ def _separation_checks(document: dict[str, Any], findings: list[Finding]) -> Non
     ]
     for subject, actors in functions.items():
         for left, right, code in pairs:
-            if actors.get(left) and actors.get(left) == actors.get(right):
+            shared = actors.get(left, set()) & actors.get(right, set())
+            for actor in sorted(shared):
                 findings.append(
                     Finding(
                         "WARNING",
                         code,
-                        f"{left.title()} and {right.lower()} share actor {actors[left]!r}.",
+                        f"{left.title()} and {right.lower()} share actor {actor!r}.",
                         subject,
                     )
                 )
-        if len(actors) >= 4 and len(set(actors.values())) == 1:
+        participating_actors = set().union(*actors.values()) if actors else set()
+        if len(actors) >= 4 and len(participating_actors) == 1:
             findings.append(
                 Finding(
                     "WARNING",
@@ -327,6 +545,41 @@ def _separation_checks(document: dict[str, Any], findings: list[Finding]) -> Non
                     subject,
                 )
             )
+
+
+def _acronym_is_expanded(text: str, match: re.Match[str]) -> bool:
+    if match.start() == 0 or text[match.start() - 1] != "(":
+        return False
+    if match.end() >= len(text) or text[match.end()] != ")":
+        return False
+    words = WORD.findall(text[: match.start() - 1])
+    acronym = match.group()
+    return len(words) >= 3 and "".join(word[0].upper() for word in words[-3:]) == acronym
+
+
+def _reference_checks(document: dict[str, Any], findings: list[Finding]) -> None:
+    state = document.get("institutional_state")
+    if not isinstance(state, dict):
+        return
+    for field, collections in REFERENCE_TARGETS.items():
+        known = {
+            identifier
+            for collection in collections
+            for record in document.get(collection, [])
+            if (identifier := _record_id(record))
+        }
+        for reference in state.get(field, []):
+            if not isinstance(reference, dict):
+                continue
+            if reference.get("resolution") == "RESOLVED" and str(reference.get("id")) not in known:
+                findings.append(
+                    _finding(
+                        "ERROR",
+                        "FALSELY_RESOLVED_REFERENCE",
+                        f"State reference {reference.get('id')!r} is not locally resolved.",
+                        reference,
+                    )
+                )
 
 
 def _warning_and_information_checks(document: dict[str, Any], findings: list[Finding]) -> None:
@@ -341,9 +594,14 @@ def _warning_and_information_checks(document: dict[str, Any], findings: list[Fin
                 )
             )
     for text in document.get("human_texts", []):
-        expanded = set(text.get("expanded_acronyms", []))
-        acronyms = set(THREE_LETTER_ACRONYM.findall(str(text.get("text", ""))))
-        unexplained = sorted(acronyms - expanded)
+        content = str(text.get("text", ""))
+        unexplained = sorted(
+            {
+                match.group()
+                for match in THREE_LETTER_ACRONYM.finditer(content)
+                if not _acronym_is_expanded(content, match)
+            }
+        )
         if unexplained:
             findings.append(
                 _finding(
@@ -408,14 +666,12 @@ def _warning_and_information_checks(document: dict[str, Any], findings: list[Fin
                 "Non-blocking documentation drift is recorded.",
             )
         )
-    if document.get("formal_authority") != document.get("effective_power") and (
-        document.get("formal_authority") is not None and document.get("effective_power") is not None
-    ):
+    if document.get("formal_authority") is not None or document.get("effective_power") is not None:
         findings.append(
             Finding(
-                "WARNING",
-                "FORMAL_EFFECTIVE_POWER_DIVERGENCE",
-                "Material divergence exists between formal authority and effective power.",
+                "INFORMATIONAL",
+                "EXPERIMENTAL_EFFECTIVE_POWER_PLACEHOLDER",
+                "The formal/effective comparison is a placeholder, not effective-power analysis.",
             )
         )
 
@@ -425,8 +681,10 @@ def validate_governance(document: dict[str, Any]) -> dict[str, Any]:
     findings: list[Finding] = []
     _authority_checks(document, findings)
     _state_checks(document, findings)
+    _event_authority_checks(document, findings)
     _lineage_checks(document, findings)
     _separation_checks(document, findings)
+    _reference_checks(document, findings)
     _warning_and_information_checks(document, findings)
     serialized = [asdict(finding) for finding in findings]
     return {
