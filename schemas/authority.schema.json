@@ -16,10 +16,9 @@
         "evidence": {
           "type": "array",
           "items": {"type": "string"}
-        },
-        "provenance_status": {"enum": ["EVIDENCED", "UNKNOWN", "INCOMPLETE", "DISPUTED"]}
+        }
       },
-      "required": ["claim_type", "evidence", "provenance_status"],
+      "required": ["claim_type", "evidence"],
       "additionalProperties": false
     }
   },
@@ -33,7 +32,12 @@
       },
       "then": {
         "required": ["foundational_basis"],
-        "not": {"required": ["authority_source"]}
+        "not": {"required": ["authority_source"]},
+        "properties": {
+          "provenance": {
+            "required": ["status"]
+          }
+        }
       },
       "else": {
         "required": ["authority_source"],

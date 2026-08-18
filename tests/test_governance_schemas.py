@@ -40,7 +40,6 @@ def registry() -> Registry[Any]:
                 "foundational_basis": {
                     "claim_type": "HUMAN_AUTHORITY_CLAIM",
                     "evidence": [],
-                    "provenance_status": "UNKNOWN",
                 },
                 "purpose": "Record an evidenced authority claim.",
                 "scope": ["review"],
@@ -150,7 +149,6 @@ def test_foundational_authority_cannot_name_upstream_source() -> None:
         "foundational_basis": {
             "claim_type": "HUMAN_AUTHORITY_CLAIM",
             "evidence": [],
-            "provenance_status": "UNKNOWN",
         },
         "purpose": "Represent an unresolved foundational claim.",
         "scope": [],
