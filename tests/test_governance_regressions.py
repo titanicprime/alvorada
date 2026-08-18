@@ -19,7 +19,6 @@ def authority(rule_id: str = "AUTH-HUMAN") -> dict[str, Any]:
         "foundational_basis": {
             "claim_type": "HUMAN_AUTHORITY_CLAIM",
             "evidence": ["evidence.md"],
-            "provenance_status": "EVIDENCED",
         },
         "scope": [
             "adjudicate",
@@ -317,7 +316,7 @@ def consequential_event(
         "actor": "HUMAN",
         "subject": "R1",
         "authority_source": source,
-        "scope": [],
+        "event_scope": [],
         "provenance": {"artifact": "event.md", "authorized_by": "HUMAN"},
     }
 
@@ -342,7 +341,7 @@ def test_consequential_event_authority_is_scoped(event_type: str) -> None:
     event["actor"] = "OTHER"
     assert "EVENT_ACTOR_NOT_ENTITLED" in codes(document, "errors")
     event["actor"] = "HUMAN"
-    event["scope"] = ["outside_grant"]
+    event["event_scope"] = ["outside_grant"]
     assert "EVENT_SCOPE_EXCEEDS_AUTHORITY" in codes(document, "errors")
 
 
@@ -516,6 +515,37 @@ def test_emergency_cannot_self_authorize_extension() -> None:
     )
     document["delegations"] = [emergency]
     assert "UNAUTHORIZED_EMERGENCY_EXTENSION" in codes(document, "errors")
+
+
+def test_emergency_can_use_separate_extension_authority() -> None:
+    document = base_document()
+    document["authorities"][0]["scope"].append("extend_emergency")
+    extension = authority("AUTH-EXTENSION")
+    extension.pop("foundational_basis")
+    extension.update(
+        {
+            "authority_basis": "DERIVED",
+            "authority_source": "AUTH-HUMAN",
+            "holder": "HUMAN",
+            "scope": ["extend_emergency"],
+            "provenance": {"artifact": "extension.md", "authorized_by": "HUMAN"},
+        }
+    )
+    document["authorities"].append(extension)
+    emergency = delegation()
+    emergency.update(
+        {
+            "emergency": True,
+            "trigger": "An externally established emergency basis.",
+            "expiry": "2026-12-01T00:00:00Z",
+            "review_path": ["HUMAN"],
+            "termination_condition": "The external trigger ends.",
+            "self_extension": "SEPARATELY_AUTHORIZED",
+            "extension_authority_source": "AUTH-EXTENSION",
+        }
+    )
+    document["delegations"] = [emergency]
+    assert validate_governance(document)["valid"] is True
 
 
 def test_institutional_reference_resolution_states() -> None:
