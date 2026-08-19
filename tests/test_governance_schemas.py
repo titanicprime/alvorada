@@ -162,6 +162,50 @@ def test_foundational_authority_cannot_name_upstream_source() -> None:
     assert list(validator.iter_errors(record))
 
 
+def foundational_authority(status: str, evidence: list[str]) -> dict[str, Any]:
+    return {
+        "rule_id": "AUTH-1",
+        "rule_type": "authority",
+        "authority_basis": "FOUNDATIONAL",
+        "foundational_basis": {
+            "claim_type": "HUMAN_AUTHORITY_CLAIM",
+            "evidence": evidence,
+        },
+        "purpose": "Represent a foundational authority claim.",
+        "scope": [],
+        "holder": "HUMAN",
+        "holder_type": "human",
+        "status": "UNKNOWN",
+        "human_explanation": "The provenance state is preserved.",
+        "provenance": {"artifact": None, "authorized_by": None, "status": status},
+    }
+
+
+def test_documented_foundational_authority_requires_evidence() -> None:
+    validator = Draft202012Validator(load("authority.schema.json"), registry=registry())
+    assert list(validator.iter_errors(foundational_authority("DOCUMENTED", [])))
+
+
+def test_documented_foundational_authority_accepts_evidence() -> None:
+    validator = Draft202012Validator(load("authority.schema.json"), registry=registry())
+    assert not list(
+        validator.iter_errors(foundational_authority("DOCUMENTED", ["supporting-evidence.md"]))
+    )
+
+
+def test_documented_foundational_authority_accepts_artifact_reference() -> None:
+    record = foundational_authority("DOCUMENTED", [])
+    record["provenance"]["artifact"] = "supporting-artifact.md"
+    validator = Draft202012Validator(load("authority.schema.json"), registry=registry())
+    assert not list(validator.iter_errors(record))
+
+
+@pytest.mark.parametrize("status", ["UNKNOWN", "INCOMPLETE", "DISPUTED"])
+def test_unverified_foundational_provenance_is_representable(status: str) -> None:
+    validator = Draft202012Validator(load("authority.schema.json"), registry=registry())
+    assert not list(validator.iter_errors(foundational_authority(status, [])))
+
+
 def test_consequential_event_schema_requires_authority() -> None:
     record = {
         "rule_id": "EVENT-1",

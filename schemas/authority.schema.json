@@ -15,7 +15,7 @@
         "claim_type": {"const": "HUMAN_AUTHORITY_CLAIM"},
         "evidence": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": {"type": "string", "minLength": 1, "pattern": "\\S"}
         }
       },
       "required": ["claim_type", "evidence"],
@@ -37,7 +37,40 @@
           "provenance": {
             "required": ["status"]
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "provenance": {
+                  "properties": {"status": {"const": "DOCUMENTED"}},
+                  "required": ["status"]
+                }
+              }
+            },
+            "then": {
+              "anyOf": [
+                {
+                  "properties": {
+                    "foundational_basis": {
+                      "properties": {"evidence": {"minItems": 1}}
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "provenance": {
+                      "properties": {
+                        "artifact": {"type": "string", "minLength": 1, "pattern": "\\S"}
+                      },
+                      "required": ["artifact"]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
       },
       "else": {
         "required": ["authority_source"],

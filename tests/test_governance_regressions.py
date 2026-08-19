@@ -385,16 +385,39 @@ def test_mission_authority_must_be_current_and_scoped(
     assert ("MISSION_WITHOUT_AUTHORITY" not in codes(document, "errors")) is valid
 
 
-def test_foundational_and_derived_authority_are_distinct() -> None:
+@pytest.mark.parametrize("status", ["UNKNOWN", "INCOMPLETE", "DISPUTED"])
+def test_unverified_foundational_provenance_remains_representable(status: str) -> None:
     document = base_document()
+    document["authorities"][0]["foundational_basis"]["evidence"] = []
     document["authorities"][0]["provenance"] = {
         "artifact": None,
         "authorized_by": None,
-        "status": "UNKNOWN",
+        "status": status,
     }
     assert validate_governance(document)["valid"] is True
     assert "FOUNDATIONAL_PROVENANCE_UNVERIFIED" in codes(document, "warnings")
 
+
+def test_documented_foundational_provenance_requires_evidence() -> None:
+    document = base_document()
+    document["authorities"][0]["foundational_basis"]["evidence"] = []
+    document["authorities"][0]["provenance"]["artifact"] = None
+    assert "FOUNDATIONAL_DOCUMENTED_WITHOUT_EVIDENCE" in codes(document, "errors")
+
+
+def test_documented_foundational_provenance_accepts_evidence() -> None:
+    document = base_document()
+    assert "FOUNDATIONAL_DOCUMENTED_WITHOUT_EVIDENCE" not in codes(document, "errors")
+
+
+def test_documented_foundational_provenance_accepts_artifact_reference() -> None:
+    document = base_document()
+    document["authorities"][0]["foundational_basis"]["evidence"] = []
+    assert "FOUNDATIONAL_DOCUMENTED_WITHOUT_EVIDENCE" not in codes(document, "errors")
+
+
+def test_foundational_and_derived_authority_are_distinct() -> None:
+    document = base_document()
     derived = authority("AUTH-DERIVED")
     derived.update(
         {
@@ -424,14 +447,14 @@ def test_lineage_is_checked_across_governance_objects(collection: str) -> None:
         record = {"event_id": "EVENT-NEW", "event_type": "PROPOSAL", "actor": "A", "subject": "R"}
     else:
         record = {"rule_id": "RULE-NEW"}
-    record["dependencies"] = ["MISSING"]
+    record["governance_dependencies"] = ["MISSING"]
     document[collection].append(record)
     assert "BROKEN_LINEAGE" in codes(document, "errors")
 
 
 def test_cross_object_lineage_can_resolve() -> None:
     document = base_document()
-    document["rules"] = [{"rule_id": "RULE-NEW", "dependencies": ["AUTH-HUMAN"]}]
+    document["rules"] = [{"rule_id": "RULE-NEW", "governance_dependencies": ["AUTH-HUMAN"]}]
     document["events"] = [
         {
             "event_id": "EVENT-NEW",
@@ -441,6 +464,16 @@ def test_cross_object_lineage_can_resolve() -> None:
             "supersedes": ["RULE-NEW"],
         }
     ]
+    assert "BROKEN_LINEAGE" not in codes(document, "errors")
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["dependencies", "artifact_dependencies", "external_dependencies"],
+)
+def test_non_governance_dependencies_do_not_require_governance_identifiers(field: str) -> None:
+    document = base_document()
+    document["rules"] = [{"rule_id": "RULE-NEW", field: ["NON-GOVERNANCE-ARTIFACT"]}]
     assert "BROKEN_LINEAGE" not in codes(document, "errors")
 
 
