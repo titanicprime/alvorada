@@ -15,11 +15,23 @@ def authority(rule_id: str = "AUTH-HUMAN") -> dict[str, Any]:
     return {
         "rule_id": rule_id,
         "rule_type": "authority",
-        "authority_source": "EXTERNAL-HUMAN-SOURCE",
-        "scope": ["authorize", "create_mission", "coordinate"],
+        "authority_basis": "FOUNDATIONAL",
+        "foundational_basis": {
+            "claim_type": "HUMAN_AUTHORITY_CLAIM",
+            "evidence": ["evidence.md"],
+        },
+        "scope": [
+            "adjudicate",
+            "authorize",
+            "certify",
+            "create_mission",
+            "execute",
+            "coordinate",
+        ],
+        "holder": "HUMAN",
         "holder_type": "human",
         "status": "ACTIVE",
-        "provenance": {"artifact": "evidence.md", "authorized_by": "HUMAN"},
+        "provenance": {"artifact": "evidence.md", "authorized_by": None, "status": "DOCUMENTED"},
     }
 
 
@@ -59,7 +71,9 @@ def codes(document: dict[str, Any], severity: str) -> set[str]:
 
 def test_authority_laundering() -> None:
     document = base_document()
-    document["authorities"][0]["authority_source"] = "POPULAR-SUCCESS"
+    document["authorities"][0].update(
+        {"authority_basis": "DERIVED", "authority_source": "POPULAR-SUCCESS"}
+    )
     assert "UNDEFINED_AUTHORITY" in codes(document, "errors")
 
 
@@ -87,6 +101,7 @@ def test_manufactured_consensus_does_not_supply_authority() -> None:
     document["authorities"].append(
         {
             **authority("AUTH-CONSENSUS"),
+            "authority_basis": "DERIVED",
             "authority_source": "CONSENSUS",
             "consensus": True,
         }
@@ -120,13 +135,17 @@ def test_role_portability() -> None:
 
 def test_artifact_substitution() -> None:
     document = base_document()
-    document["authorities"][0]["authority_source"] = "README-FILE"
+    document["authorities"][0].update(
+        {"authority_basis": "DERIVED", "authority_source": "README-FILE"}
+    )
     assert "UNDEFINED_AUTHORITY" in codes(document, "errors")
 
 
 def test_output_provenance_inversion() -> None:
     document = base_document()
-    document["authorities"][0]["authority_source"] = "AUTH-HUMAN"
+    document["authorities"][0].update(
+        {"authority_basis": "DERIVED", "authority_source": "AUTH-HUMAN"}
+    )
     assert "SELF_ATTESTED_AUTHORITY" in codes(document, "errors")
 
 
@@ -151,18 +170,16 @@ def test_recommendation_to_authorization_collapse() -> None:
     assert "PROPOSAL_AUTHORIZATION_COLLAPSE" in codes(document, "warnings")
 
 
-def test_historical_interpretation_does_not_create_foundational_authority() -> None:
+def test_artificial_intelligence_does_not_create_foundational_authority() -> None:
     document = base_document()
     historical = authority("AUTH-HISTORY")
     historical.update(
         {
-            "authority_source": "HISTORICAL-INTERPRETATION",
             "holder_type": "artificial_intelligence",
-            "foundational": True,
         }
     )
     document["authorities"].append(historical)
-    assert "ARTIFICIAL_FOUNDATIONAL_AUTHORITY" in codes(document, "errors")
+    assert "INVALID_FOUNDATIONAL_AUTHORITY_CLAIM" in codes(document, "errors")
 
 
 def test_self_certification() -> None:
@@ -225,7 +242,8 @@ def test_effective_power_versus_formal_authority() -> None:
     document = base_document()
     document["formal_authority"] = "HUMAN"
     document["effective_power"] = "AUTOMATION"
-    assert "FORMAL_EFFECTIVE_POWER_DIVERGENCE" in codes(document, "warnings")
+    assert "EXPERIMENTAL_EFFECTIVE_POWER_PLACEHOLDER" in codes(document, "informational")
+    assert "FORMAL_EFFECTIVE_POWER_DIVERGENCE" not in codes(document, "warnings")
 
 
 def test_human_control_plane_legibility() -> None:
@@ -240,7 +258,11 @@ def test_three_letter_acronym_expansion() -> None:
     document["human_texts"] = [{"rule_id": "T1", "text": "The ABC controls this record."}]
     assert "UNEXPLAINED_THREE_LETTER_ACRONYM" in codes(document, "warnings")
     document["human_texts"][0]["expanded_acronyms"] = ["ABC"]
+    assert "UNEXPLAINED_THREE_LETTER_ACRONYM" in codes(document, "warnings")
+    document["human_texts"][0]["text"] = "Alpha Beta Council (ABC) controls this record."
     assert "UNEXPLAINED_THREE_LETTER_ACRONYM" not in codes(document, "warnings")
+    document["human_texts"][0]["text"] += " ABC remains responsible."
+    assert "UNEXPLAINED_THREE_LETTER_ACRONYM" in codes(document, "warnings")
 
 
 def test_broken_provenance() -> None:
@@ -282,6 +304,295 @@ def test_broken_lineage_and_silent_supersession() -> None:
         {"rule_id": "R3", "replaces": "R2"},
     ]
     assert {"BROKEN_LINEAGE", "SILENT_SUPERSESSION"} <= codes(document, "errors")
+
+
+def consequential_event(
+    event_type: str = "AUTHORIZATION", source: str = "AUTH-HUMAN"
+) -> dict[str, Any]:
+    return {
+        "event_id": f"EVENT-{event_type}",
+        "rule_id": f"EVENT-{event_type}",
+        "event_type": event_type,
+        "actor": "HUMAN",
+        "subject": "R1",
+        "authority_source": source,
+        "event_scope": [],
+        "provenance": {"artifact": "event.md", "authorized_by": "HUMAN"},
+    }
+
+
+def test_authorization_event_requires_authority() -> None:
+    document = base_document()
+    event = consequential_event(source="MISSING")
+    document["events"] = [event]
+    assert "EVENT_WITHOUT_AUTHORITY" in codes(document, "errors")
+    event["authority_source"] = "AUTH-HUMAN"
+    assert validate_governance(document)["valid"] is True
+
+
+@pytest.mark.parametrize(
+    "event_type", ["ADJUDICATION", "AUTHORIZATION", "EXECUTION", "CERTIFICATION"]
+)
+def test_consequential_event_authority_is_scoped(event_type: str) -> None:
+    document = base_document()
+    event = consequential_event(event_type)
+    document["events"] = [event]
+    assert validate_governance(document)["valid"] is True
+    event["actor"] = "OTHER"
+    assert "EVENT_ACTOR_NOT_ENTITLED" in codes(document, "errors")
+    event["actor"] = "HUMAN"
+    event["event_scope"] = ["outside_grant"]
+    assert "EVENT_SCOPE_EXCEEDS_AUTHORITY" in codes(document, "errors")
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        {"status": "INACTIVE"},
+        {"expiry": "2026-01-01T00:00:00Z"},
+    ],
+)
+def test_consequential_event_authority_must_be_current(mutation: dict[str, Any]) -> None:
+    document = base_document()
+    document["authorities"][0].update(mutation)
+    document["events"] = [consequential_event()]
+    assert "EVENT_WITHOUT_ACTIVE_AUTHORITY" in codes(document, "errors")
+
+
+def test_consequential_event_requires_provenance() -> None:
+    document = base_document()
+    event = consequential_event()
+    del event["provenance"]
+    document["events"] = [event]
+    assert "EVENT_BROKEN_PROVENANCE" in codes(document, "errors")
+
+
+@pytest.mark.parametrize(
+    ("mutation", "valid"),
+    [
+        ({}, True),
+        ({"status": "INACTIVE"}, False),
+        ({"expiry": "2026-01-01T00:00:00Z"}, False),
+        ({"scope": ["coordinate"]}, False),
+    ],
+)
+def test_mission_authority_must_be_current_and_scoped(
+    mutation: dict[str, Any], valid: bool
+) -> None:
+    document = base_document()
+    document["authorities"][0].update(mutation)
+    document["missions"] = [{"mission_id": "M1", "authority_source": "AUTH-HUMAN"}]
+    assert ("MISSION_WITHOUT_AUTHORITY" not in codes(document, "errors")) is valid
+
+
+@pytest.mark.parametrize("status", ["UNKNOWN", "INCOMPLETE", "DISPUTED"])
+def test_unverified_foundational_provenance_remains_representable(status: str) -> None:
+    document = base_document()
+    document["authorities"][0]["foundational_basis"]["evidence"] = []
+    document["authorities"][0]["provenance"] = {
+        "artifact": None,
+        "authorized_by": None,
+        "status": status,
+    }
+    assert validate_governance(document)["valid"] is True
+    assert "FOUNDATIONAL_PROVENANCE_UNVERIFIED" in codes(document, "warnings")
+
+
+def test_documented_foundational_provenance_requires_evidence() -> None:
+    document = base_document()
+    document["authorities"][0]["foundational_basis"]["evidence"] = []
+    document["authorities"][0]["provenance"]["artifact"] = None
+    assert "FOUNDATIONAL_DOCUMENTED_WITHOUT_EVIDENCE" in codes(document, "errors")
+
+
+def test_documented_foundational_provenance_accepts_evidence() -> None:
+    document = base_document()
+    assert "FOUNDATIONAL_DOCUMENTED_WITHOUT_EVIDENCE" not in codes(document, "errors")
+
+
+def test_documented_foundational_provenance_accepts_artifact_reference() -> None:
+    document = base_document()
+    document["authorities"][0]["foundational_basis"]["evidence"] = []
+    assert "FOUNDATIONAL_DOCUMENTED_WITHOUT_EVIDENCE" not in codes(document, "errors")
+
+
+def test_foundational_and_derived_authority_are_distinct() -> None:
+    document = base_document()
+    derived = authority("AUTH-DERIVED")
+    derived.update(
+        {
+            "authority_basis": "DERIVED",
+            "authority_source": "AUTH-HUMAN",
+            "scope": ["authorize"],
+            "holder": "DELEGATE",
+            "provenance": {"artifact": "grant.md", "authorized_by": "HUMAN"},
+        }
+    )
+    document["authorities"].append(derived)
+    assert validate_governance(document)["valid"] is True
+    derived["authority_source"] = "AUTH-DERIVED"
+    assert "SELF_ATTESTED_AUTHORITY" in codes(document, "errors")
+
+
+@pytest.mark.parametrize("collection", ["authorities", "delegations", "offices", "events", "rules"])
+def test_lineage_is_checked_across_governance_objects(collection: str) -> None:
+    document = base_document()
+    if collection == "authorities":
+        record = authority("AUTH-NEW")
+    elif collection == "delegations":
+        record = delegation("DEL-NEW")
+    elif collection == "offices":
+        record = {"office_id": "OFFICE-NEW", "scope": [], "grant_ids": []}
+    elif collection == "events":
+        record = {"event_id": "EVENT-NEW", "event_type": "PROPOSAL", "actor": "A", "subject": "R"}
+    else:
+        record = {"rule_id": "RULE-NEW"}
+    record["governance_dependencies"] = ["MISSING"]
+    document[collection].append(record)
+    assert "BROKEN_LINEAGE" in codes(document, "errors")
+
+
+def test_cross_object_lineage_can_resolve() -> None:
+    document = base_document()
+    document["rules"] = [{"rule_id": "RULE-NEW", "governance_dependencies": ["AUTH-HUMAN"]}]
+    document["events"] = [
+        {
+            "event_id": "EVENT-NEW",
+            "event_type": "PROPOSAL",
+            "actor": "A",
+            "subject": "RULE-NEW",
+            "supersedes": ["RULE-NEW"],
+        }
+    ]
+    assert "BROKEN_LINEAGE" not in codes(document, "errors")
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["dependencies", "artifact_dependencies", "external_dependencies"],
+)
+def test_non_governance_dependencies_do_not_require_governance_identifiers(field: str) -> None:
+    document = base_document()
+    document["rules"] = [{"rule_id": "RULE-NEW", field: ["NON-GOVERNANCE-ARTIFACT"]}]
+    assert "BROKEN_LINEAGE" not in codes(document, "errors")
+
+
+def test_separation_preserves_multiple_actors_per_function() -> None:
+    document = base_document()
+    document["events"] = [
+        {"subject": "R1", "event_type": "PROPOSAL", "actor": "RED-1"},
+        {"subject": "R1", "event_type": "PROPOSAL", "actor": "SIENNA-5"},
+        {"subject": "R1", "event_type": "AUTHORIZATION", "actor": "RED-1"},
+    ]
+    warnings = validate_governance(document)["warnings"]
+    collapse = [item for item in warnings if item["code"] == "PROPOSAL_AUTHORIZATION_COLLAPSE"]
+    assert len(collapse) == 1
+    assert "RED-1" in collapse[0]["message"]
+    assert "SIENNA-5" not in collapse[0]["message"]
+
+
+def test_bounded_emergency_delegation() -> None:
+    document = base_document()
+    emergency = delegation()
+    emergency.update(
+        {
+            "emergency": True,
+            "trigger": "An externally established emergency basis.",
+            "expiry": "2026-12-01T00:00:00Z",
+            "review_path": ["HUMAN"],
+            "termination_condition": "The external trigger ends.",
+            "self_extension": "PROHIBITED",
+            "amendable_fields": [],
+        }
+    )
+    document["delegations"] = [emergency]
+    assert validate_governance(document)["valid"] is True
+    emergency["expiry"] = None
+    assert "INCOMPLETE_EMERGENCY_DELEGATION" in codes(document, "errors")
+    emergency["expiry"] = "2026-12-01T00:00:00Z"
+    emergency["amendable_fields"] = ["scope"]
+    assert "EMERGENCY_SELF_REDEFINITION" in codes(document, "errors")
+
+
+def test_emergency_requires_active_upstream_authority() -> None:
+    document = base_document()
+    emergency = delegation()
+    emergency.update(
+        {
+            "emergency": True,
+            "trigger": "An externally established emergency basis.",
+            "expiry": "2026-12-01T00:00:00Z",
+            "review_path": ["HUMAN"],
+            "termination_condition": "The external trigger ends.",
+            "self_extension": "PROHIBITED",
+        }
+    )
+    document["delegations"] = [emergency]
+    document["authorities"][0]["status"] = "INACTIVE"
+    assert "EMERGENCY_WITHOUT_ACTIVE_AUTHORITY" in codes(document, "errors")
+
+
+def test_emergency_cannot_self_authorize_extension() -> None:
+    document = base_document()
+    emergency = delegation()
+    emergency.update(
+        {
+            "emergency": True,
+            "trigger": "An externally established emergency basis.",
+            "expiry": "2026-12-01T00:00:00Z",
+            "review_path": ["HUMAN"],
+            "termination_condition": "The external trigger ends.",
+            "self_extension": "SEPARATELY_AUTHORIZED",
+            "extension_authority_source": "DEL-COORDINATE",
+        }
+    )
+    document["delegations"] = [emergency]
+    assert "UNAUTHORIZED_EMERGENCY_EXTENSION" in codes(document, "errors")
+
+
+def test_emergency_can_use_separate_extension_authority() -> None:
+    document = base_document()
+    document["authorities"][0]["scope"].append("extend_emergency")
+    extension = authority("AUTH-EXTENSION")
+    extension.pop("foundational_basis")
+    extension.update(
+        {
+            "authority_basis": "DERIVED",
+            "authority_source": "AUTH-HUMAN",
+            "holder": "HUMAN",
+            "scope": ["extend_emergency"],
+            "provenance": {"artifact": "extension.md", "authorized_by": "HUMAN"},
+        }
+    )
+    document["authorities"].append(extension)
+    emergency = delegation()
+    emergency.update(
+        {
+            "emergency": True,
+            "trigger": "An externally established emergency basis.",
+            "expiry": "2026-12-01T00:00:00Z",
+            "review_path": ["HUMAN"],
+            "termination_condition": "The external trigger ends.",
+            "self_extension": "SEPARATELY_AUTHORIZED",
+            "extension_authority_source": "AUTH-EXTENSION",
+        }
+    )
+    document["delegations"] = [emergency]
+    assert validate_governance(document)["valid"] is True
+
+
+def test_institutional_reference_resolution_states() -> None:
+    document = base_document()
+    document["missions"] = [{"mission_id": "M1", "authority_source": "AUTH-HUMAN"}]
+    document["institutional_state"] = {
+        "authorities": [{"id": "AUTH-HUMAN", "resolution": "RESOLVED"}],
+        "offices": [{"id": "OFFICE-EXTERNAL", "resolution": "EXTERNAL"}],
+        "delegations": [{"id": "DEL-UNKNOWN", "resolution": "UNKNOWN"}],
+        "active_missions": [{"id": "MISSING", "resolution": "UNRESOLVED"}],
+    }
+    assert "FALSELY_RESOLVED_REFERENCE" not in codes(document, "errors")
+    document["institutional_state"]["active_missions"][0]["resolution"] = "RESOLVED"
+    assert "FALSELY_RESOLVED_REFERENCE" in codes(document, "errors")
 
 
 @pytest.mark.parametrize(

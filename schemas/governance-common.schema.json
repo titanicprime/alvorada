@@ -28,7 +28,36 @@
       "additionalProperties": false
     },
     "supersedes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
-    "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "replaces": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      ]
+    },
+    "dependencies": {
+      "description": "Generic dependencies; values are not resolved as governance identifiers.",
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "governance_dependencies": {
+      "description": "Governance-object identifiers that must resolve within the document.",
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "artifact_dependencies": {
+      "description": "Artifact references that are not governance-object identifiers.",
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "external_dependencies": {
+      "description": "External references that are not resolved within the document.",
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
     "effective_date": {"type": ["string", "null"], "format": "date-time"},
     "expiry": {"type": ["string", "null"], "format": "date-time"},
     "status": {
@@ -49,11 +78,11 @@
     "provenance": {
       "type": "object",
       "properties": {
-        "artifact": {"type": "string", "minLength": 1},
-        "authorized_by": {"type": "string", "minLength": 1},
+        "artifact": {"type": ["string", "null"], "minLength": 1},
+        "authorized_by": {"type": ["string", "null"], "minLength": 1},
+        "status": {"enum": ["DOCUMENTED", "UNKNOWN", "INCOMPLETE", "DISPUTED"]},
         "recorded_at": {"type": ["string", "null"], "format": "date-time"}
       },
-      "required": ["artifact", "authorized_by"],
       "additionalProperties": false
     }
   },

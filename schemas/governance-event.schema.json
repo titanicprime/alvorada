@@ -22,7 +22,19 @@
     },
     "actor": {"type": "string", "minLength": 1},
     "subject": {"type": "string", "minLength": 1},
-    "evidence": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+    "evidence": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "event_scope": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
   },
-  "required": ["event_id", "event_type", "actor", "subject", "evidence", "provenance"]
+  "required": ["event_id", "event_type", "actor", "subject", "evidence", "provenance"],
+  "if": {
+    "properties": {
+      "event_type": {
+        "enum": ["ADJUDICATION", "AUTHORIZATION", "EXECUTION", "CERTIFICATION"]
+      }
+    },
+    "required": ["event_type"]
+  },
+  "then": {
+    "required": ["authority_source", "event_scope"]
+  }
 }

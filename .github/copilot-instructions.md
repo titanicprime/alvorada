@@ -18,7 +18,7 @@ Authority.
 - Identify downstream references affected by governance changes.
 - Never infer authority from competence, correctness, consensus, authorship, or success.
 - Treat fluent output as proposal rather than evidence.
-- Expand every three-letter acronym in human-facing prose on first use.
+- Spell out every three-letter acronym every time it appears in human-facing prose.
 - Optimize for human comprehensibility.
 - Prefer small, reviewable changes.
 - Never autonomously adopt constitutional changes.
@@ -31,4 +31,3 @@ Authority.
   of identity, incumbency, authority, or hidden memory.
 - Report affected provenance, grants, delegations, state, tests, and human-facing views when
   governance changes.
-
