@@ -154,6 +154,27 @@ def _authority_checks(document: dict[str, Any], findings: list[Finding]) -> None
                         record,
                     )
                 )
+            elif provenance.get("status") == "DOCUMENTED":
+                foundational_basis = record.get("foundational_basis")
+                evidence = (
+                    foundational_basis.get("evidence", [])
+                    if isinstance(foundational_basis, dict)
+                    else []
+                )
+                has_evidence = isinstance(evidence, list) and any(
+                    isinstance(item, str) and bool(item.strip()) for item in evidence
+                )
+                artifact = provenance.get("artifact")
+                has_artifact = isinstance(artifact, str) and bool(artifact.strip())
+                if not has_evidence and not has_artifact:
+                    findings.append(
+                        _finding(
+                            "ERROR",
+                            "BROKEN_PROVENANCE",
+                            "Documented foundational provenance requires supporting evidence.",
+                            record,
+                        )
+                    )
             elif provenance.get("status") in {"UNKNOWN", "INCOMPLETE", "DISPUTED"}:
                 findings.append(
                     _finding(
@@ -464,7 +485,7 @@ def _lineage_checks(document: dict[str, Any], findings: list[Finding]) -> None:
         lineage = [
             *record.get("supersedes", []),
             *replacement_ids,
-            *record.get("dependencies", []),
+            *record.get("governance_dependencies", []),
         ]
         for predecessor in lineage:
             if str(predecessor) not in ids:
@@ -472,7 +493,7 @@ def _lineage_checks(document: dict[str, Any], findings: list[Finding]) -> None:
                     _finding(
                         "ERROR",
                         "BROKEN_LINEAGE",
-                        f"Superseded record {predecessor!r} is missing.",
+                        f"Governance lineage reference {predecessor!r} is missing.",
                         record,
                     )
                 )

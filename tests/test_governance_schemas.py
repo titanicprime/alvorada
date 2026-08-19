@@ -162,6 +162,43 @@ def test_foundational_authority_cannot_name_upstream_source() -> None:
     assert list(validator.iter_errors(record))
 
 
+@pytest.mark.parametrize(
+    ("status", "evidence", "artifact", "valid"),
+    [
+        ("DOCUMENTED", [], None, False),
+        ("DOCUMENTED", ["source.md"], None, True),
+        ("UNKNOWN", [], None, True),
+        ("INCOMPLETE", ["partial-source.md"], None, True),
+        ("DISPUTED", ["claim.md", "counterclaim.md"], None, True),
+    ],
+)
+def test_foundational_provenance_evidence_semantics(
+    status: str, evidence: list[str], artifact: str | None, valid: bool
+) -> None:
+    record = {
+        "rule_id": "AUTH-1",
+        "rule_type": "authority",
+        "authority_basis": "FOUNDATIONAL",
+        "foundational_basis": {
+            "claim_type": "HUMAN_AUTHORITY_CLAIM",
+            "evidence": evidence,
+        },
+        "purpose": "Represent a foundational human authority claim.",
+        "scope": [],
+        "holder": "HUMAN",
+        "holder_type": "human",
+        "status": "UNKNOWN",
+        "human_explanation": "The provenance state is represented without inference.",
+        "provenance": {
+            "artifact": artifact,
+            "authorized_by": None,
+            "status": status,
+        },
+    }
+    validator = Draft202012Validator(load("authority.schema.json"), registry=registry())
+    assert (not list(validator.iter_errors(record))) is valid
+
+
 def test_consequential_event_schema_requires_authority() -> None:
     record = {
         "rule_id": "EVENT-1",

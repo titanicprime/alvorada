@@ -34,7 +34,18 @@
         {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
       ]
     },
-    "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "dependencies": {
+      "description": "Generic artifact, standard, dataset, process, or other dependencies.",
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "governance_dependencies": {
+      "description": "Governance-object identifiers that require local resolution.",
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
     "effective_date": {"type": ["string", "null"], "format": "date-time"},
     "expiry": {"type": ["string", "null"], "format": "date-time"},
     "status": {

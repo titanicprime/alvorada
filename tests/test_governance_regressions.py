@@ -411,6 +411,31 @@ def test_foundational_and_derived_authority_are_distinct() -> None:
     assert "SELF_ATTESTED_AUTHORITY" in codes(document, "errors")
 
 
+@pytest.mark.parametrize(
+    ("status", "evidence", "artifact", "valid"),
+    [
+        ("DOCUMENTED", [], None, False),
+        ("DOCUMENTED", ["evidence.md"], None, True),
+        ("UNKNOWN", [], None, True),
+        ("INCOMPLETE", ["partial-evidence.md"], None, True),
+        ("DISPUTED", ["claim.md", "counterclaim.md"], None, True),
+    ],
+)
+def test_foundational_provenance_evidence_semantics(
+    status: str, evidence: list[str], artifact: str | None, valid: bool
+) -> None:
+    document = base_document()
+    record = document["authorities"][0]
+    record["foundational_basis"]["evidence"] = evidence
+    record["provenance"] = {
+        "artifact": artifact,
+        "authorized_by": None,
+        "status": status,
+    }
+    assert validate_governance(document)["valid"] is valid
+    assert ("BROKEN_PROVENANCE" not in codes(document, "errors")) is valid
+
+
 @pytest.mark.parametrize("collection", ["authorities", "delegations", "offices", "events", "rules"])
 def test_lineage_is_checked_across_governance_objects(collection: str) -> None:
     document = base_document()
@@ -424,14 +449,27 @@ def test_lineage_is_checked_across_governance_objects(collection: str) -> None:
         record = {"event_id": "EVENT-NEW", "event_type": "PROPOSAL", "actor": "A", "subject": "R"}
     else:
         record = {"rule_id": "RULE-NEW"}
-    record["dependencies"] = ["MISSING"]
+    record["governance_dependencies"] = ["MISSING"]
     document[collection].append(record)
     assert "BROKEN_LINEAGE" in codes(document, "errors")
 
 
+def test_generic_dependencies_do_not_require_governance_object_resolution() -> None:
+    document = base_document()
+    document["rules"] = [
+        {
+            "rule_id": "RULE-NEW",
+            "dependencies": ["ISO-EXTERNAL-STANDARD", "dataset.csv", "review-process"],
+        }
+    ]
+    assert "BROKEN_LINEAGE" not in codes(document, "errors")
+
+
 def test_cross_object_lineage_can_resolve() -> None:
     document = base_document()
-    document["rules"] = [{"rule_id": "RULE-NEW", "dependencies": ["AUTH-HUMAN"]}]
+    document["rules"] = [
+        {"rule_id": "RULE-NEW", "governance_dependencies": ["AUTH-HUMAN"]}
+    ]
     document["events"] = [
         {
             "event_id": "EVENT-NEW",
