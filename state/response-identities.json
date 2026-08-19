@@ -1,0 +1,49 @@
+{
+  "registry_version": "1.0",
+  "resolution": "RESOLVED",
+  "derived_from": [
+    "state/current.yaml",
+    "constitution/red-1.md",
+    "constitution/mr-gold.md",
+    "constitution/blue-0.md",
+    "constitution/sienna-4.md"
+  ],
+  "members": [
+    {
+      "state_member_id": "RED-1",
+      "member_designation": "Red-1",
+      "canonical_role": "Watcher–Coordinator",
+      "sources": [
+        "state/current.yaml:2",
+        "constitution/red-1.md:1"
+      ]
+    },
+    {
+      "state_member_id": "MR_GOLD",
+      "member_designation": "Mr. Gold",
+      "canonical_role": "Formal Systems, Consistency, and Recursive-Control Analyst",
+      "sources": [
+        "state/current.yaml:20",
+        "constitution/mr-gold.md:1"
+      ]
+    },
+    {
+      "state_member_id": "BLUE_0",
+      "member_designation": "Blue-0",
+      "canonical_role": "Generalization and Outside-View Analyst",
+      "sources": [
+        "state/current.yaml:21",
+        "constitution/blue-0.md:1"
+      ]
+    },
+    {
+      "state_member_id": "SIENNA_4",
+      "member_designation": "Sienna-4",
+      "canonical_role": "Adversarial Self-Modification and Failure-Memory Falsifier",
+      "sources": [
+        "state/current.yaml:22",
+        "constitution/sienna-4.md:1"
+      ]
+    }
+  ]
+}
