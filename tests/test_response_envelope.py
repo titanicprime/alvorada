@@ -17,6 +17,8 @@ from alvorada.response_envelope import (
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MR_GOLD_ROLE = "Formal Systems, Consistency, and Recursive-Control Analyst"
 BLUE_0_ROLE = "Generalization and Outside-View Analyst"
+SIENNA_4_ROLE = "Adversarial Self-Modification and Failure-Memory Falsifier"
+FIXTURE_DIR = REPO_ROOT / "tests" / "fixtures" / "response-envelope"
 
 
 def response() -> dict[str, Any]:
@@ -48,6 +50,7 @@ def test_correct_identity_and_role_specific_content_conform() -> None:
     result = validate_response_envelope(response())
     assert result["conformant"] is True
     assert result["identity"] == "MATCH"
+    assert result["identity_status"] == "ACTIVE"
 
 
 def test_json_whitespace_does_not_change_conformance() -> None:
@@ -142,12 +145,24 @@ def test_member_cannot_invent_canonical_role() -> None:
     assert "SELF_CREATED_ROLE" in codes(result)
 
 
-def test_blue_zero_cannot_use_mr_gold_role() -> None:
+def test_blue_zero_alt_claiming_mr_gold_role_is_unknown_member() -> None:
     document = response()
-    document["member_designation"] = "Blue-0"
+    document["member_designation"] = "Blue-0-Alt"
+    document["canonical_role"] = MR_GOLD_ROLE
     result = validate_response_envelope(document)
-    assert result["identity"] == "MISMATCH"
-    assert "ROLE_MISMATCH" in codes(result)
+    assert result["identity"] == "UNKNOWN_MEMBER"
+    assert result["identity_status"] == "UNCLEAR"
+    assert "UNKNOWN_MEMBER" in codes(result)
+
+
+def test_sienna_five_cannot_invent_canonical_role() -> None:
+    document = response()
+    document["member_designation"] = "Sienna-5"
+    document["canonical_role"] = "Self-Created Examiner"
+    result = validate_response_envelope(document)
+    assert result["identity"] == "UNKNOWN_MEMBER"
+    assert result["identity_status"] == "UNCLEAR"
+    assert "UNKNOWN_MEMBER" in codes(result)
 
 
 def test_missing_member_designation_fails() -> None:
@@ -257,7 +272,12 @@ def test_human_render_separates_conformance_from_substantive_review() -> None:
     document = response()
     result = validate_response_envelope(document)
     rendered = render_response(document, result)
-    assert "Envelope: CONFORMANT" in rendered
+    assert "Canonical role: " + MR_GOLD_ROLE in rendered
+    assert "Identity status: ACTIVE" in rendered
+    assert "Message type: ANALYSIS" in rendered
+    assert "Permitted output class: REVIEW" in rendered
+    assert "State effect: NONE" in rendered
+    assert "Envelope conformance: CONFORMANT" in rendered
     assert "Identity: MATCH" in rendered
     assert "Substantive review: REQUIRES HUMAN / ROLE REVIEW" in rendered
 
@@ -278,3 +298,93 @@ def test_registry_roles_are_derived_from_current_role_files() -> None:
     roles = {item["member_designation"]: item["canonical_role"] for item in registry["members"]}
     assert roles["Mr. Gold"] == MR_GOLD_ROLE
     assert roles["Blue-0"] == BLUE_0_ROLE
+    assert roles["Sienna-4"] == SIENNA_4_ROLE
+
+
+def test_registry_preserves_unresolved_identity_gaps_without_registering_them() -> None:
+    registry = load_identity_registry()
+    registered = {item["member_designation"] for item in registry["members"]}
+    gaps = {
+        item["member_designation"]: item["identity_status"]
+        for item in registry["unresolved_identity_gaps"]
+    }
+    assert set(gaps) == {"Blue-0-Alt", "Sienna-5", "Purple Rain", "Thucydides"}
+    assert set(gaps.values()) == {"UNCLEAR"}
+    assert not registered.intersection(gaps)
+
+
+def test_historical_identity_is_represented_but_not_accepted_as_current() -> None:
+    registry = copy.deepcopy(load_identity_registry())
+    blue = next(item for item in registry["members"] if item["member_designation"] == "Blue-0")
+    blue["identity_status"] = "HISTORICAL"
+    blue["lineage"] = {
+        "relationship": "UNCLEAR",
+        "related_designation": "Blue-0-Alt",
+    }
+    document = response()
+    document["member_designation"] = "Blue-0"
+    document["canonical_role"] = BLUE_0_ROLE
+    result = validate_response_envelope(document, registry=registry)
+    assert result["identity"] == "MISMATCH"
+    assert result["identity_status"] == "HISTORICAL"
+    assert "IDENTITY_NOT_CURRENT" in codes(result)
+
+
+def test_message_type_and_output_class_remain_independent_dimensions() -> None:
+    document = response()
+    document["message_type"] = "EXAMINATION"
+    document["permitted_output_class"] = "CONFORMANCE_RESPONSE"
+    assert validate_response_envelope(document)["conformant"] is True
+
+
+def test_current_profile_fixtures_are_structurally_valid_without_creating_standing() -> None:
+    schema = json.loads(
+        (REPO_ROOT / "schemas" / "response-envelope.schema.json").read_text(encoding="utf-8")
+    )
+    validator = Draft202012Validator(schema)
+    expected_identity = {
+        "Mr. Gold": ("MATCH", "ACTIVE"),
+        "Red-1": ("MATCH", "ACTIVE"),
+        "Blue-0-Alt": ("UNKNOWN_MEMBER", "UNCLEAR"),
+        "Sienna-5": ("UNKNOWN_MEMBER", "UNCLEAR"),
+        "Purple Rain": ("UNKNOWN_MEMBER", "UNCLEAR"),
+        "Thucydides": ("UNKNOWN_MEMBER", "UNCLEAR"),
+    }
+    observed_classes: set[str] = set()
+    for path in sorted(FIXTURE_DIR.glob("*.json")):
+        document = json.loads(path.read_text(encoding="utf-8"))
+        assert not list(validator.iter_errors(document)), path.name
+        result = validate_response_envelope(document)
+        assert (result["identity"], result["identity_status"]) == expected_identity[
+            document["member_designation"]
+        ]
+        observed_classes.add(document["permitted_output_class"])
+    assert observed_classes == {
+        "ANALYSIS",
+        "CHRONOLOGICAL_RECORD",
+        "CONFORMANCE_RESPONSE",
+        "FORMAL_REVIEW",
+        "INFORMATIONAL_OBSERVATION",
+    }
+
+
+def test_all_evidenced_output_classes_are_permitted() -> None:
+    schema = json.loads(
+        (REPO_ROOT / "schemas" / "response-envelope.schema.json").read_text(encoding="utf-8")
+    )
+    assert set(schema["properties"]["permitted_output_class"]["enum"]) == {
+        "RECEIPT",
+        "INFORMATIONAL_OBSERVATION",
+        "ANALYSIS",
+        "PROPOSAL",
+        "REVIEW",
+        "FORMAL_REVIEW",
+        "INSPECTION",
+        "ADJUDICATION",
+        "EXECUTION",
+        "CERTIFICATION",
+        "HISTORICAL_INTERPRETATION",
+        "CHRONOLOGICAL_RECORD",
+        "CONFORMANCE_RESPONSE",
+        "RECOMMENDATION",
+    }

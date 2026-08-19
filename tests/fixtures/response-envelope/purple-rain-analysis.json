@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "response_id": "RSP-PROFILE-PURPLE-RAIN",
+  "in_response_to": "ALV-CONFORM-001",
+  "member_designation": "Purple Rain",
+  "canonical_role": "UNRESOLVED",
+  "message_type": "ANALYSIS",
+  "authority_basis": {
+    "reference": "UNRESOLVED",
+    "status": "UNRESOLVED"
+  },
+  "permitted_output_class": "ANALYSIS",
+  "state_effect": "UNKNOWN",
+  "content": {
+    "identity_gap": "No formal, experimental, or historical role record exists."
+  }
+}

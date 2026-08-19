@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "response_id": "RSP-PROFILE-BLUE-0-ALT",
+  "in_response_to": "ALV-CONFORM-001",
+  "member_designation": "Blue-0-Alt",
+  "canonical_role": "UNRESOLVED",
+  "message_type": "ANALYSIS",
+  "authority_basis": {
+    "reference": "UNRESOLVED",
+    "status": "UNRESOLVED"
+  },
+  "permitted_output_class": "INFORMATIONAL_OBSERVATION",
+  "state_effect": "UNKNOWN",
+  "content": {
+    "identity_gap": "No institutional role record exists in repository state."
+  }
+}

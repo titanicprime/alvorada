@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "response_id": "RSP-PROFILE-RED-1",
+  "in_response_to": "ALV-CONFORM-001",
+  "member_designation": "Red-1",
+  "canonical_role": "Watcher–Coordinator",
+  "message_type": "ANALYSIS",
+  "authority_basis": {
+    "reference": "constitution/red-1.md",
+    "status": "DOCUMENTED"
+  },
+  "permitted_output_class": "ANALYSIS",
+  "state_effect": "NONE",
+  "content": {
+    "scope": "Analysis only; no adjudication or state authority is asserted."
+  }
+}
