@@ -59,7 +59,7 @@ def _schema_findings(envelope: dict[str, Any]) -> list[EnvelopeFinding]:
                 else "ENUM_VALUE_INVALID"
             )
         else:
-            code = "FIELD_NAME_INVALID"
+            code = "FIELD_VALUE_INVALID"
         key = (code, path)
         if key not in seen:
             findings.append(_finding("ERROR", code, error.message, path))

@@ -172,6 +172,14 @@ def test_invalid_enum_fails() -> None:
     assert "ENUM_VALUE_INVALID" in codes(validate_response_envelope(document))
 
 
+def test_invalid_field_value_is_not_reported_as_invalid_field_name() -> None:
+    document = response()
+    document["response_id"] = "not-a-response-identifier"
+    result = validate_response_envelope(document)
+    assert "FIELD_VALUE_INVALID" in codes(result)
+    assert "FIELD_NAME_INVALID" not in codes(result)
+
+
 def test_self_created_authority_state_fails() -> None:
     document = response()
     document["state_effect"] = "CANONICALLY_APPROVED"
