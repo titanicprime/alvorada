@@ -89,9 +89,7 @@ def _identity_state(
     member = next((item for item in members if item.get("member_designation") == designation), None)
     if member is None:
         gaps = [
-            item
-            for item in registry.get("unresolved_identity_gaps", [])
-            if isinstance(item, dict)
+            item for item in registry.get("unresolved_identity_gaps", []) if isinstance(item, dict)
         ]
         gap = next((item for item in gaps if item.get("member_designation") == designation), None)
         if gap is not None:
@@ -370,8 +368,7 @@ def render_response(envelope: dict[str, Any], result: dict[str, Any]) -> str:
             f"Canonical role: {envelope.get('canonical_role', 'UNRESOLVED')}",
             f"Identity status: {result['identity_status']}",
             f"Message type: {envelope.get('message_type', 'UNRESOLVED')}",
-            f"Permitted output class: "
-            f"{envelope.get('permitted_output_class', 'UNRESOLVED')}",
+            f"Permitted output class: {envelope.get('permitted_output_class', 'UNRESOLVED')}",
             f"Responding to: {responding_to}",
             f"Envelope conformance: {envelope_state}",
             f"Identity: {result['identity']}",
