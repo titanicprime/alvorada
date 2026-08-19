@@ -105,13 +105,20 @@
     },
     "permitted_output_class": {
       "enum": [
+        "RECEIPT",
+        "INFORMATIONAL_OBSERVATION",
+        "ANALYSIS",
         "PROPOSAL",
         "REVIEW",
+        "FORMAL_REVIEW",
         "INSPECTION",
         "ADJUDICATION",
         "EXECUTION",
         "CERTIFICATION",
-        "HISTORICAL_INTERPRETATION"
+        "HISTORICAL_INTERPRETATION",
+        "CHRONOLOGICAL_RECORD",
+        "CONFORMANCE_RESPONSE",
+        "RECOMMENDATION"
       ]
     },
     "state_effect": {"$ref": "#/$defs/state_effect"},

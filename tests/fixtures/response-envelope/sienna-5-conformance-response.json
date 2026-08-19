@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "response_id": "RSP-PROFILE-SIENNA-5",
+  "in_response_to": "ALV-CONFORM-001",
+  "member_designation": "Sienna-5",
+  "canonical_role": "UNRESOLVED",
+  "message_type": "EXAMINATION",
+  "authority_basis": {
+    "reference": "UNRESOLVED",
+    "status": "UNRESOLVED"
+  },
+  "permitted_output_class": "CONFORMANCE_RESPONSE",
+  "state_effect": "UNKNOWN",
+  "content": {
+    "identity_gap": "No institutional role record exists in repository state."
+  }
+}

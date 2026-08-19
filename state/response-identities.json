@@ -13,6 +13,7 @@
       "state_member_id": "RED-1",
       "member_designation": "Red-1",
       "canonical_role": "Watcher–Coordinator",
+      "identity_status": "ACTIVE",
       "sources": [
         "state/current.yaml:2",
         "constitution/red-1.md:1"
@@ -22,6 +23,7 @@
       "state_member_id": "MR_GOLD",
       "member_designation": "Mr. Gold",
       "canonical_role": "Formal Systems, Consistency, and Recursive-Control Analyst",
+      "identity_status": "ACTIVE",
       "sources": [
         "state/current.yaml:20",
         "constitution/mr-gold.md:1"
@@ -31,6 +33,7 @@
       "state_member_id": "BLUE_0",
       "member_designation": "Blue-0",
       "canonical_role": "Generalization and Outside-View Analyst",
+      "identity_status": "ACTIVE",
       "sources": [
         "state/current.yaml:21",
         "constitution/blue-0.md:1"
@@ -40,9 +43,62 @@
       "state_member_id": "SIENNA_4",
       "member_designation": "Sienna-4",
       "canonical_role": "Adversarial Self-Modification and Failure-Memory Falsifier",
+      "identity_status": "ACTIVE",
       "sources": [
         "state/current.yaml:22",
         "constitution/sienna-4.md:1"
+      ]
+    }
+  ],
+  "unresolved_identity_gaps": [
+    {
+      "member_designation": "Blue-0-Alt",
+      "identity_status": "UNCLEAR",
+      "reason": "No current or historical institutional role record exists in the repository.",
+      "possible_lineage": {
+        "relationship": "UNCLEAR",
+        "related_designation": "Blue-0"
+      },
+      "searched_sources": [
+        "state/current.yaml",
+        "constitution/",
+        "MIGRATION_INVENTORY.md"
+      ]
+    },
+    {
+      "member_designation": "Sienna-5",
+      "identity_status": "UNCLEAR",
+      "reason": "No current or historical institutional role record exists in the repository.",
+      "possible_lineage": {
+        "relationship": "UNCLEAR",
+        "related_designation": "Sienna-4"
+      },
+      "searched_sources": [
+        "state/current.yaml",
+        "constitution/",
+        "MIGRATION_INVENTORY.md"
+      ]
+    },
+    {
+      "member_designation": "Purple Rain",
+      "identity_status": "UNCLEAR",
+      "reason": "No formal, experimental, or historical institutional role record exists in the repository.",
+      "searched_sources": [
+        "state/current.yaml",
+        "constitution/",
+        "missions/",
+        "MIGRATION_INVENTORY.md"
+      ]
+    },
+    {
+      "member_designation": "Thucydides",
+      "identity_status": "UNCLEAR",
+      "reason": "No formal, experimental, or historical institutional role record exists in the repository.",
+      "searched_sources": [
+        "state/current.yaml",
+        "constitution/",
+        "missions/",
+        "MIGRATION_INVENTORY.md"
       ]
     }
   ]

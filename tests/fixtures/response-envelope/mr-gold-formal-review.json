@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "response_id": "RSP-PROFILE-MR-GOLD",
+  "in_response_to": "ALV-CONFORM-001",
+  "member_designation": "Mr. Gold",
+  "canonical_role": "Formal Systems, Consistency, and Recursive-Control Analyst",
+  "message_type": "REVIEW",
+  "authority_basis": {
+    "reference": "constitution/mr-gold.md",
+    "status": "DOCUMENTED"
+  },
+  "permitted_output_class": "FORMAL_REVIEW",
+  "state_effect": "NONE",
+  "content": {
+    "scope": "Envelope structure only; substantive authority remains unassessed."
+  }
+}

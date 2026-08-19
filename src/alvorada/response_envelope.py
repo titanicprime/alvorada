@@ -69,7 +69,7 @@ def _schema_findings(envelope: dict[str, Any]) -> list[EnvelopeFinding]:
 
 def _identity_state(
     envelope: dict[str, Any], registry: dict[str, Any], findings: list[EnvelopeFinding]
-) -> str:
+) -> tuple[str, str]:
     if registry.get("resolution") != "RESOLVED":
         findings.append(
             _finding(
@@ -78,16 +78,32 @@ def _identity_state(
                 "Institutional identity registry cannot currently resolve identities.",
             )
         )
-        return "UNRESOLVED_REGISTRY"
+        return "UNRESOLVED_REGISTRY", "UNRESOLVED"
 
     members = [item for item in registry.get("members", []) if isinstance(item, dict)]
     designation = envelope.get("member_designation")
     role = envelope.get("canonical_role")
     if not isinstance(designation, str) or not designation:
-        return "UNKNOWN_MEMBER"
+        return "UNKNOWN_MEMBER", "UNCLEAR"
 
     member = next((item for item in members if item.get("member_designation") == designation), None)
     if member is None:
+        gaps = [
+            item
+            for item in registry.get("unresolved_identity_gaps", [])
+            if isinstance(item, dict)
+        ]
+        gap = next((item for item in gaps if item.get("member_designation") == designation), None)
+        if gap is not None:
+            findings.append(
+                _finding(
+                    "ERROR",
+                    "UNKNOWN_MEMBER",
+                    f"Member designation {designation!r} has unresolved institutional standing.",
+                    "member_designation",
+                )
+            )
+            return "UNKNOWN_MEMBER", str(gap.get("identity_status", "UNCLEAR"))
         normalized = "".join(character.lower() for character in designation if character.isalnum())
         near_match = next(
             (
@@ -115,7 +131,7 @@ def _identity_state(
                     "member_designation",
                 )
             )
-            return "MISMATCH"
+            return "MISMATCH", str(near_match.get("identity_status", "UNCLEAR"))
         findings.append(
             _finding(
                 "ERROR",
@@ -124,14 +140,25 @@ def _identity_state(
                 "member_designation",
             )
         )
-        return "UNKNOWN_MEMBER"
+        return "UNKNOWN_MEMBER", "UNCLEAR"
 
+    identity_status = str(member.get("identity_status", "UNCLEAR"))
+    if identity_status != "ACTIVE":
+        findings.append(
+            _finding(
+                "ERROR",
+                "IDENTITY_NOT_CURRENT",
+                f"Member designation {designation!r} has status {identity_status}, not ACTIVE.",
+                "member_designation",
+            )
+        )
+        return "MISMATCH", identity_status
     registered_roles = {str(item.get("canonical_role")) for item in members}
     expected_role = member.get("canonical_role")
     if not isinstance(role, str) or not role:
-        return "UNKNOWN_ROLE"
+        return "UNKNOWN_ROLE", identity_status
     if role == expected_role:
-        return "MATCH"
+        return "MATCH", identity_status
     if role not in registered_roles:
         findings.append(
             _finding(
@@ -141,7 +168,7 @@ def _identity_state(
                 "canonical_role",
             )
         )
-        return "UNKNOWN_ROLE"
+        return "UNKNOWN_ROLE", identity_status
     findings.append(
         _finding(
             "ERROR",
@@ -150,7 +177,7 @@ def _identity_state(
             "canonical_role",
         )
     )
-    return "MISMATCH"
+    return "MISMATCH", identity_status
 
 
 def _correction_checks(
@@ -208,7 +235,9 @@ def validate_response_envelope(
     """Validate protocol conformance without making a substantive or authority judgment."""
     findings = list(initial_findings or [])
     findings.extend(_schema_findings(envelope))
-    identity = _identity_state(envelope, registry or load_identity_registry(), findings)
+    identity, identity_status = _identity_state(
+        envelope, registry or load_identity_registry(), findings
+    )
     _correction_checks(envelope, response_index or {}, findings)
 
     serialized = [asdict(item) for item in findings]
@@ -218,6 +247,7 @@ def validate_response_envelope(
     return {
         "conformant": not errors,
         "identity": identity,
+        "identity_status": identity_status,
         "errors": errors,
         "warnings": warnings,
         "informational": informational,
@@ -337,9 +367,13 @@ def render_response(envelope: dict[str, Any], result: dict[str, Any]) -> str:
         [
             f"Response: {envelope.get('response_id', 'UNRESOLVED')}",
             f"Member: {envelope.get('member_designation', 'UNRESOLVED')}",
-            f"Role: {envelope.get('canonical_role', 'UNRESOLVED')}",
+            f"Canonical role: {envelope.get('canonical_role', 'UNRESOLVED')}",
+            f"Identity status: {result['identity_status']}",
+            f"Message type: {envelope.get('message_type', 'UNRESOLVED')}",
+            f"Permitted output class: "
+            f"{envelope.get('permitted_output_class', 'UNRESOLVED')}",
             f"Responding to: {responding_to}",
-            f"Envelope: {envelope_state}",
+            f"Envelope conformance: {envelope_state}",
             f"Identity: {result['identity']}",
             f"State effect: {envelope.get('state_effect', 'UNRESOLVED')}",
             f"Substantive review: {result['substantive_review']}",

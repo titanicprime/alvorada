@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "response_id": "RSP-PROFILE-THUCYDIDES",
+  "in_response_to": "ALV-CONFORM-001",
+  "member_designation": "Thucydides",
+  "canonical_role": "UNRESOLVED",
+  "message_type": "ANALYSIS",
+  "authority_basis": {
+    "reference": "UNRESOLVED",
+    "status": "UNRESOLVED"
+  },
+  "permitted_output_class": "CHRONOLOGICAL_RECORD",
+  "state_effect": "UNKNOWN",
+  "content": {
+    "identity_gap": "No formal, experimental, or historical role record exists."
+  }
+}

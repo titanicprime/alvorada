@@ -21,6 +21,18 @@
           "state_member_id": {"type": "string", "minLength": 1},
           "member_designation": {"type": "string", "minLength": 1},
           "canonical_role": {"type": "string", "minLength": 1},
+          "identity_status": {
+            "enum": ["ACTIVE", "HISTORICAL", "SUPERSEDED", "UNCLEAR"]
+          },
+          "lineage": {
+            "type": "object",
+            "properties": {
+              "relationship": {"enum": ["SUCCESSOR", "VARIANT", "UNCLEAR"]},
+              "related_designation": {"type": "string", "minLength": 1}
+            },
+            "required": ["relationship", "related_designation"],
+            "additionalProperties": false
+          },
           "sources": {
             "type": "array",
             "items": {"type": "string", "minLength": 1},
@@ -32,12 +44,52 @@
           "state_member_id",
           "member_designation",
           "canonical_role",
+          "identity_status",
           "sources"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "unresolved_identity_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "member_designation": {"type": "string", "minLength": 1},
+          "identity_status": {"const": "UNCLEAR"},
+          "reason": {"type": "string", "minLength": 1},
+          "possible_lineage": {
+            "type": "object",
+            "properties": {
+              "relationship": {"const": "UNCLEAR"},
+              "related_designation": {"type": "string", "minLength": 1}
+            },
+            "required": ["relationship", "related_designation"],
+            "additionalProperties": false
+          },
+          "searched_sources": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "member_designation",
+          "identity_status",
+          "reason",
+          "searched_sources"
         ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["registry_version", "resolution", "derived_from", "members"],
+  "required": [
+    "registry_version",
+    "resolution",
+    "derived_from",
+    "members",
+    "unresolved_identity_gaps"
+  ],
   "additionalProperties": false
 }

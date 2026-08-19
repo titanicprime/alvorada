@@ -56,6 +56,55 @@ The registry at `state/response-identities.json` derives its entries from
 `state/current.yaml` and the current role files. Historical identity artifacts remain
 historical and are not silently normalized.
 
+### Current identity versus historical identity
+
+The registry is a projection of institutional state, not an authority source. A current
+identity must be supported by `state/current.yaml` and a current role record. Historical and
+superseded identities remain recorded with their own status and lineage; an alias or possible
+successor never silently acquires the predecessor's standing. Governed responses therefore
+require exact self-identification.
+
+Repository evidence currently supports `Red-1`, `Mr. Gold`, `Blue-0`, and `Sienna-4` as active
+registry entries. It does not contain current, historical, or experimental role records for
+`Blue-0-Alt`, `Sienna-5`, `Purple Rain`, or `Thucydides`. Those reported designations are
+recorded only as `UNCLEAR` gaps, not as members. The possible relationships between
+`Blue-0-Alt` and `Blue-0`, and between `Sienna-5` and `Sienna-4`, are also `UNCLEAR`.
+Establishing succession, variants, standing, or new roles requires institutional evidence and,
+where standing changes, human Constitutional Authority.
+
+An exact historical or superseded designation remains representable but does not return
+`MATCH` as a current identity. It is rendered with its status and remains nonconformant where
+current identity is required.
+
+## Permitted output classes
+
+`permitted_output_class` supports:
+
+- `RECEIPT`;
+- `INFORMATIONAL_OBSERVATION`;
+- `ANALYSIS`;
+- `PROPOSAL`;
+- `REVIEW`;
+- `FORMAL_REVIEW`;
+- `INSPECTION`;
+- `ADJUDICATION`;
+- `EXECUTION`;
+- `CERTIFICATION`;
+- `HISTORICAL_INTERPRETATION`;
+- `CHRONOLOGICAL_RECORD`;
+- `CONFORMANCE_RESPONSE`; and
+- `RECOMMENDATION`.
+
+`RECOMMENDATION` is explicit because the current role records permit recommendations while
+withholding authorization. `REVIEW` and `FORMAL_REVIEW` remain separate because governed
+communications use both labels; the repository does not yet contain a complete authority rule
+that defines their boundary, so that distinction remains operationally ambiguous rather than
+silently collapsed.
+
+Message type and permitted output class are independent dimensions. For example, an
+`EXAMINATION` message can carry a `CONFORMANCE_RESPONSE` output class. Neither field establishes
+substantive authority.
+
 ## Correction semantics
 
 A correction names the response it `supersedes`, its registered identity, a defined
@@ -82,8 +131,9 @@ Humans do not need to inspect raw structured data. Render a response with:
 alvorada render-response response.json
 ```
 
-The view displays the response identifier, member, role, antecedent, envelope result,
-identity result, state effect, and the explicit statement
+The view displays the response identifier, member, canonical role, identity status, message
+type, permitted output class, antecedent, envelope result, identity result, state effect, and
+the explicit statement
 `Substantive review: REQUIRES HUMAN / ROLE REVIEW`. Machine identifiers remain unchanged
 where their established code is required.
 
