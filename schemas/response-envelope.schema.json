@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alvorada.local/schemas/response-envelope.schema.json",
+  "title": "Governed response envelope",
+  "description": "Technical envelope conformance does not establish truth, authority, correctness, certification, or constitutional legitimacy.",
+  "type": "object",
+  "$defs": {
+    "state_effect": {
+      "enum": [
+        "NONE",
+        "PROPOSED",
+        "REVIEW_REQUIRED",
+        "EXECUTION_REQUESTED",
+        "UNKNOWN",
+        "UNRESOLVED",
+        "DISPUTED"
+      ]
+    },
+    "confidence": {
+      "enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN", "NOT TESTED", "INAPPLICABLE"]
+    },
+    "scenario": {
+      "type": "object",
+      "properties": {
+        "scenario_id": {"type": "string", "minLength": 1},
+        "known": {"type": "array", "items": {"type": "string"}},
+        "unknown_or_unresolved": {"type": "array", "items": {"type": "string"}},
+        "authority_analysis": {},
+        "permitted": {"type": "array", "items": {"type": "string"}},
+        "prohibited": {"type": "array", "items": {"type": "string"}},
+        "state_effect": {"$ref": "#/$defs/state_effect"},
+        "process_required": {"type": "array", "items": {"type": "string"}},
+        "governing_principles": {"type": "array", "items": {"type": "string"}},
+        "confidence": {"$ref": "#/$defs/confidence"}
+      },
+      "required": [
+        "scenario_id",
+        "known",
+        "unknown_or_unresolved",
+        "authority_analysis",
+        "permitted",
+        "prohibited",
+        "state_effect",
+        "process_required",
+        "governing_principles",
+        "confidence"
+      ],
+      "additionalProperties": false
+    },
+    "examination_content": {
+      "type": "object",
+      "properties": {
+        "scenarios": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/scenario"},
+          "minItems": 1
+        },
+        "cross_scenario_conflicts": {"type": "array", "items": {"type": "string"}},
+        "constitutional_gaps_discovered": {"type": "array", "items": {"type": "string"}},
+        "self_assessed_conformance": {
+          "enum": ["CONFORMANT", "NONCONFORMANT", "UNKNOWN", "REQUIRES_REVIEW"]
+        }
+      },
+      "required": [
+        "scenarios",
+        "cross_scenario_conflicts",
+        "constitutional_gaps_discovered",
+        "self_assessed_conformance"
+      ],
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "patternProperties": {
+        "^x_[a-z][a-z0-9_]*$": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "response_id": {"type": "string", "pattern": "^RSP-[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "in_response_to": {"type": "string", "minLength": 1},
+    "supersedes": {"type": "string", "minLength": 1},
+    "member_designation": {"type": "string", "minLength": 1},
+    "canonical_role": {"type": "string", "minLength": 1},
+    "message_type": {
+      "enum": [
+        "GOVERNANCE_RESPONSE",
+        "REVIEW",
+        "ANALYSIS",
+        "EXAMINATION",
+        "CORRECTION"
+      ]
+    },
+    "profile": {"enum": ["BASE", "CONFORMANCE_EXAMINATION"]},
+    "authority_basis": {
+      "type": "object",
+      "properties": {
+        "reference": {"type": "string", "minLength": 1},
+        "status": {"enum": ["DOCUMENTED", "UNKNOWN", "UNRESOLVED", "DISPUTED"]}
+      },
+      "required": ["reference", "status"],
+      "additionalProperties": false
+    },
+    "permitted_output_class": {
+      "enum": [
+        "PROPOSAL",
+        "REVIEW",
+        "INSPECTION",
+        "ADJUDICATION",
+        "EXECUTION",
+        "CERTIFICATION",
+        "HISTORICAL_INTERPRETATION"
+      ]
+    },
+    "state_effect": {"$ref": "#/$defs/state_effect"},
+    "content": {},
+    "correction": {
+      "enum": [
+        "IDENTITY_PROVENANCE_CORRECTED",
+        "ENVELOPE_CORRECTED",
+        "SUBSTANTIVE_CONTENT_CORRECTED"
+      ]
+    },
+    "substantive_content_changed": {"enum": ["YES", "NO"]},
+    "extensions": {"$ref": "#/$defs/extensions"}
+  },
+  "required": [
+    "schema_version",
+    "response_id",
+    "member_designation",
+    "canonical_role",
+    "message_type",
+    "state_effect"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {"message_type": {"const": "CORRECTION"}},
+        "required": ["message_type"]
+      },
+      "then": {
+        "required": ["supersedes", "correction", "substantive_content_changed"]
+      },
+      "else": {
+        "required": [
+          "in_response_to",
+          "authority_basis",
+          "permitted_output_class",
+          "content"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {"profile": {"const": "CONFORMANCE_EXAMINATION"}},
+        "required": ["profile"]
+      },
+      "then": {
+        "properties": {"content": {"$ref": "#/$defs/examination_content"}},
+        "required": ["content"]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

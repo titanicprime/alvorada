@@ -13,6 +13,11 @@ from alvorada.dictionary import REPO_ROOT, dictionary_check
 from alvorada.exceptions import AlvoradaError
 from alvorada.hashing import hash_file, verify_hash_file
 from alvorada.lineage import verify_lineage_path
+from alvorada.response_envelope import (
+    load_identity_registry,
+    render_response,
+    validate_response_file,
+)
 from alvorada.validator import validate_directory, validate_document
 
 
@@ -29,6 +34,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate_directory_parser = subparsers.add_parser("validate-directory")
     validate_directory_parser.add_argument("path")
+
+    for command in ("validate-response", "render-response"):
+        response_parser = subparsers.add_parser(command)
+        response_parser.add_argument("file")
+        response_parser.add_argument("--registry")
+        response_parser.add_argument("--responses")
 
     canonicalize = subparsers.add_parser("canonicalize")
     canonicalize.add_argument("file")
@@ -71,6 +82,25 @@ def main(argv: list[str] | None = None) -> int:
             result = validate_directory(Path(args.path))
             _print_json(result)
             return 0 if result["valid"] else 1
+        if args.command in {"validate-response", "render-response"}:
+            registry_path = Path(args.registry) if args.registry else None
+            registry = load_identity_registry(registry_path)
+            response_index: dict[str, dict[str, Any]] = {}
+            if args.responses:
+                for response_path in sorted(Path(args.responses).glob("*.json")):
+                    value = load_json_file(response_path)
+                    if isinstance(value, dict) and isinstance(value.get("response_id"), str):
+                        response_index[value["response_id"]] = value
+            envelope, result = validate_response_file(
+                Path(args.file),
+                registry=registry,
+                response_index=response_index,
+            )
+            if args.command == "validate-response":
+                _print_json(result)
+            else:
+                print(render_response(envelope or {}, result))
+            return 0 if result["conformant"] else 1
         if args.command == "canonicalize":
             sys.stdout.buffer.write(canonicalize_file(Path(args.file)))
             sys.stdout.buffer.write(b"\n")
