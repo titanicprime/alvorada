@@ -145,9 +145,10 @@ def test_member_cannot_invent_canonical_role() -> None:
     assert "SELF_CREATED_ROLE" in codes(result)
 
 
-def test_blue_zero_alt_cannot_use_mr_gold_role() -> None:
+def test_blue_zero_alt_claiming_mr_gold_role_is_unknown_member() -> None:
     document = response()
     document["member_designation"] = "Blue-0-Alt"
+    document["canonical_role"] = MR_GOLD_ROLE
     result = validate_response_envelope(document)
     assert result["identity"] == "UNKNOWN_MEMBER"
     assert result["identity_status"] == "UNCLEAR"
